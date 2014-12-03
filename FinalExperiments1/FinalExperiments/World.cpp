@@ -11,6 +11,8 @@ World::World()
 	mouse_prev_y = 0;
 
 	pan_camera = false;
+
+	current_camera = 0;
 }
 
 World::~World()
@@ -30,12 +32,13 @@ void World::init(int in_width,int in_height)
 
 	initLights();
 
-	// initialize camera
-	cam.init(0, 10, 20);
-
-	// set camera movement characteristics
-	cam.setEyeMove(1);
-	cam.setLookAtMove(.7);
+	// initialize cameras
+	Camera* temp1 = new Camera();
+	temp1->init(0, 10, 20);
+	cams.push_back(temp1);
+	//Camera* temp2 = new Camera();
+	//temp2->init(0, 10, 20);
+	//cams.push_back(temp2);
 
 	// initialize shaders
 	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag");
@@ -57,6 +60,8 @@ void World::init(int in_width,int in_height)
 	setupTextures();
 
 	glClearColor(0, 0, 0, 0);
+
+	terrain.init();
 }
 
 void World::initValues()
@@ -189,19 +194,23 @@ void World::setUniforms()
 	}
 
 	// setup camera uniforms
-	cam.setUniforms(shader);
+	cams.at(current_camera)->setUniforms(shader);
 }
 
 void World::draw(Shader in_shader)
 {
-	cube.draw(in_shader);
-	ground.draw(in_shader);
+	//cube.draw(in_shader);
+	//ground.draw(in_shader);
+	terrain.draw(in_shader);
 }
 
 void World::keyPress(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
+	case 'c':
+		current_camera = (current_camera + 1) % cams.size();
+		break;
 	//--------------------------------------------------------------------------------------
 	// Individual Light Toggle
 	//--------------------------------------------------------------------------------------
@@ -227,20 +236,20 @@ void World::keyPress(unsigned char key, int x, int y)
 	// Movement Keyboard
 	//--------------------------------------------------------------------------------------
 	case 'w':
-		cam.setEyeMove(.5);
-		cam.camUp();
+		cams.at(current_camera)->setEyeMove(.5);
+		cams.at(current_camera)->camUp();
 		break;
 	case 'a':
-		cam.setEyeMove(.5);
-		cam.camLeft();
+		cams.at(current_camera)->setEyeMove(.5);
+		cams.at(current_camera)->camLeft();
 		break;
 	case 's':
-		cam.setEyeMove(.25);
-		cam.camDown();
+		cams.at(current_camera)->setEyeMove(.25);
+		cams.at(current_camera)->camDown();
 		break;
 	case 'd':
-		cam.setEyeMove(.5);
-		cam.camRight();
+		cams.at(current_camera)->setEyeMove(.5);
+		cams.at(current_camera)->camRight();
 		break;
 	//--------------------------------------------------------------------------------------
 	// Screen Shaping
@@ -265,16 +274,16 @@ void World::arrowInput(int key, int x, int y)
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-		cam.camLookUp();
+		cams.at(current_camera)->camLookUp();
 		break;
 	case GLUT_KEY_DOWN:
-		cam.camLookDown();
+		cams.at(current_camera)->camLookDown();
 		break;
 	case GLUT_KEY_LEFT:
-		cam.camLookLeft();
+		cams.at(current_camera)->camLookLeft();
 		break;
 	case GLUT_KEY_RIGHT:
-		cam.camLookRight();
+		cams.at(current_camera)->camLookRight();
 		break;
 	}
 
@@ -317,18 +326,18 @@ void World::mouseFunc(int button, int state, float x, float y)
 		// Wheel Forward ( Zoom In )
 		//-------------------------------------------------------
 	case 3:
-		cam.setEyeMove(1);
+		cams.at(current_camera)->setEyeMove(1);
 		if (state == GLUT_UP) return;
-		cam.zoomIn();
+		cams.at(current_camera)->zoomIn();
 		//cout << "( " << cam.getEyePosition().x << " , " << cam.getEyePosition().y << " , " << cam.getEyePosition().z << " )\n";
 		break;
 		//-------------------------------------------------------
 		// Wheel Back ( Zoom Out )
 		//-------------------------------------------------------
 	case 4:
-		cam.setEyeMove(1);
+		cams.at(current_camera)->setEyeMove(1);
 		if (state == GLUT_UP) return;
-		cam.zoomOut();
+		cams.at(current_camera)->zoomOut();
 		//cout << "( " << cam.getEyePosition().x << " , " << cam.getEyePosition().y << " , " << cam.getEyePosition().z << " )\n";
 		break;
 	default:
@@ -344,19 +353,19 @@ void World::motionFunc(float x, float y)
 	{
 		vec2 move_direction = vec2(x - mouse_prev_x, y - mouse_prev_y);
 
-		cam.setLookAtMove(abs(move_direction.x) * 75);
+		cams.at(current_camera)->setLookAtMove(abs(move_direction.x) * 75);
 
 		if (move_direction.x > 0)
-			cam.camLookRight();
+			cams.at(current_camera)->camLookRight();
 		if (move_direction.x < 0)
-			cam.camLookLeft();
+			cams.at(current_camera)->camLookLeft();
 
-		cam.setLookAtMove(abs(move_direction.y) * 75);
+		cams.at(current_camera)->setLookAtMove(abs(move_direction.y) * 75);
 
 		if (move_direction.y > 0)
-			cam.camLookUp();
+			cams.at(current_camera)->camLookUp();
 		if (move_direction.y < 0)
-			cam.camLookDown();
+			cams.at(current_camera)->camLookDown();
 
 		mouse_prev_x = x;
 		mouse_prev_y = y;
@@ -366,19 +375,19 @@ void World::motionFunc(float x, float y)
 	{
 		vec2 move_direction = vec2(x - mouse_prev_x, y - mouse_prev_y);
 
-		cam.setEyeMove(abs(move_direction.x) * 50);
+		cams.at(current_camera)->setEyeMove(abs(move_direction.x) * 50);
 
 		if (move_direction.x > 0)
-			cam.camRight();
+			cams.at(current_camera)->camRight();
 		if (move_direction.x < 0)
-			cam.camLeft();
+			cams.at(current_camera)->camLeft();
 
-		cam.setEyeMove(abs(move_direction.y) * 50);
+		cams.at(current_camera)->setEyeMove(abs(move_direction.y) * 50);
 
 		if (move_direction.y > 0)
-			cam.camIn();
+			cams.at(current_camera)->camIn();
 		if (move_direction.y < 0)
-			cam.camOut();
+			cams.at(current_camera)->camOut();
 
 		mouse_prev_x = x;
 		mouse_prev_y = y;
@@ -400,7 +409,7 @@ void World::reshapeFunc(int w, int h)
 	window_width = w;
 	window_height = h;
 
-	cam.setFrustum(-.30, .30,
+	cams.at(current_camera)->setFrustum(-.30, .30,
 		map(0, 0, w, -.30, .30),
 		map(h, 0, w, -.30, .30),
 		.3, 10000);

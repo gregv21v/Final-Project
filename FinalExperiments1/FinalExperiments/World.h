@@ -21,11 +21,6 @@
 #include <iostream>
 #include <ctime>
 #include <stdlib.h>
-#include <Windows.h>
-#include <queue>
-#include <Windows.h>
-#include <MMSystem.h>
-#include <thread>
 
 #include "LoadShaders.h"
 #include "vgl.h"
@@ -37,10 +32,12 @@
 #include "Light.h"
 #include "Camera.h"
 #include "ShadowMap.h"
+#include "Terrain.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
 #define NUM_TEXTURES 2 
+
 
 using glm::mat4;
 
@@ -104,9 +101,10 @@ private:
 	//---------------------------------------
 	// Camera
 	//---------------------------------------
-	Camera cam;
+	vector<Camera*> cams;
 	bool pan_camera;
 	bool move_camera;
+	int current_camera;
 	//---------------------------------------
 
 	//---------------------------------------
@@ -139,6 +137,12 @@ private:
 	int window_height;
 	int win_full_prev_width;
 	int win_full_prev_height;
+	//---------------------------------------
+
+	//---------------------------------------
+	// Terrain
+	//---------------------------------------
+	Terrain terrain;
 	//---------------------------------------
 };
 

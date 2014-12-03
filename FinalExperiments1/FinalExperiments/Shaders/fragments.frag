@@ -126,6 +126,7 @@ void main()
 			{
 				vec3 rgb = min(Ambient + net_shadow * (vertColor.rgb * scatteredLight + reflectedLight), vec3(1.0));
 				fragColor = vec4(rgb, vertColor.a);
+				fragColor = vec4(1,1,1,1);
 			}
 		}
 		else
