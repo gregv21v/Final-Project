@@ -78,20 +78,19 @@ public:
 	void setView(mat4);
 
 	void setFrustum(float, float, float, float, float, float);
+	vec4 convertToEyeSpace(vec4 point);
+	vec4 convertToWorldSpace(vec4 point);
 
 private:
-
-	float eye_x;
-	float eye_y;
-	float eye_z;
 
 	float look_x;
 	float look_y;
 	float look_z;
 
+	vec3 look;
 	vec3 eyePosition;
 	vec3 eyeDirection;
-
+	
 	float target_x;
 	float target_y;
 	float target_z;
@@ -100,11 +99,13 @@ private:
 	float look_move;
 
 	vec3 totalRotation;
+	
 
 	mat4 view;
 	mat4 eyeRotate;
 	mat4 position;
 	mat4 frustum;
 	mat4 rotateMatrix;
+
 };
 

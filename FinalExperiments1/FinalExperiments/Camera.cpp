@@ -243,3 +243,15 @@ void Camera::setFrustum(float in_left, float in_right, float in_bottom, float in
 {
 	frustum = glm::frustum(in_left, in_right, in_bottom, in_top, in_near, in_far);
 }
+
+// from normalized device coordinates to eye space
+vec4 Camera::convertToEyeSpace(vec4 point)
+{
+	return glm::inverse(frustum) * point;
+}
+
+// from eye to world space
+vec4 Camera::convertToWorldSpace(vec4 point)
+{
+	return glm::inverse(view) * point;
+}

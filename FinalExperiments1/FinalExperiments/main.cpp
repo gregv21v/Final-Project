@@ -26,6 +26,7 @@ using std::endl;
 using std::cout;
 
 World world;
+Window window;
 
 void display()
 {
@@ -78,8 +79,9 @@ int main(int argc, char* argv[])
 	// setup display/version information
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA);
-	glutInitWindowSize(WIN_WIDTH, WIN_HEIGHT);
-	glutInitWindowPosition(0, 0);
+	
+	window.init(WIN_WIDTH, WIN_HEIGHT);
+
 	glutInitContextVersion(3, 3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutCreateWindow("Experiment");
@@ -94,7 +96,7 @@ int main(int argc, char* argv[])
 	}
 
 	// initialize the world
-	world.init(WIN_WIDTH,WIN_HEIGHT);
+	world.init(&window);
 
 	// set up the display and keyboard functions
 	glutDisplayFunc(display);

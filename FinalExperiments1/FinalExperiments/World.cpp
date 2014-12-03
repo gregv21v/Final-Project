@@ -21,10 +21,9 @@ World::~World()
 	}
 }
 
-void World::init(int in_width,int in_height)
+void World::init(Window * window)
 {
-	window_width = in_width;
-	window_height = in_height;
+	_window = window;
 
 	initValues();
 
@@ -172,7 +171,7 @@ void World::renderShadowMaps()
 
 void World::setUniforms()
 {
-	glViewport(0, 0, window_width, window_height);
+	glViewport(0, 0, _window->getWidth(), _window->getHeight());
 	
 	// setup global uniforms
 	glUniform3f(shader.getUniformLocation("EyeDirection"), 0, 0, 0);
@@ -249,8 +248,8 @@ void World::keyPress(unsigned char key, int x, int y)
 		glutReshapeWindow(win_full_prev_width, win_full_prev_height);
 		break;
 	case 'q':
-		win_full_prev_width = window_width;
-		win_full_prev_height = window_height;
+		win_full_prev_width = _window->getWidth();
+		win_full_prev_height = _window->getHeight();
 		glutFullScreen();
 	//--------------------------------------------------------------------------------------
 	default:
@@ -288,13 +287,26 @@ void World::idleFunc()
 
 void World::mouseFunc(int button, int state, float x, float y)
 {
+	vec4 rayClip, rayEye, rayWorld;
 	switch (button)
 	{
 		//-------------------------------------------------------
 		// Left Button ( Mod Terrain )
 		//-------------------------------------------------------
-	case 0:
+	case GLUT_LEFT_BUTTON:
+		// cast a ray to the terrain
+		rayClip = vec4(x, y, -1.0f, 1.0f);
+		rayEye = cam.convertToEyeSpace(rayClip);
+		rayEye = vec4(glm::vec2(rayEye), -1.0f, 1.0f);
+		rayWorld = cam.convertToWorldSpace(rayEye);
+
+
+		cout << "Ray Position: ( " << rayWorld.x << " , " << rayWorld.y << " , " << rayWorld.z << " )" << endl;
+
+		
+
 		break;
+
 		//-------------------------------------------------------
 		// Wheel Button ( Camera Panning )
 		//-------------------------------------------------------
@@ -393,12 +405,14 @@ void World::passiveMotionFunc(float x, float y)
 {
 	mouse_prev_x = x;
 	mouse_prev_y = y;
+
+
 }
 
 void World::reshapeFunc(int w, int h)
 {
-	window_width = w;
-	window_height = h;
+	_window->setWidth(w);
+	_window->setHeight(h);
 
 	cam.setFrustum(-.30, .30,
 		map(0, 0, w, -.30, .30),

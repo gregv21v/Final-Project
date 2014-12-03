@@ -1,4 +1,5 @@
 #version 330 core
+#pragma optionNV unroll all
 
 struct LightProperties{
 	bool isEnabled;

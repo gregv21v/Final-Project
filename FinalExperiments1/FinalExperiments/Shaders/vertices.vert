@@ -1,4 +1,5 @@
 #version 330 core
+#pragma optionNV unroll all
 
 uniform mat4 VPMatrix;		// view projection matrix
 uniform mat4 VMatrix;

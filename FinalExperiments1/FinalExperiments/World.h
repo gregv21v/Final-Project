@@ -37,6 +37,7 @@
 #include "Light.h"
 #include "Camera.h"
 #include "ShadowMap.h"
+#include "Window.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
@@ -51,7 +52,7 @@ public:
 
 	World();
 	~World();
-	void init(int,int);							// initializes World
+	void init(Window * window);							// initializes World
 	void display();							// display function
 
 	//--------------------------------------------
@@ -135,8 +136,7 @@ private:
 	//---------------------------------------
 	// Window size
 	//---------------------------------------
-	int window_width;
-	int window_height;
+	Window * _window;
 	int win_full_prev_width;
 	int win_full_prev_height;
 	//---------------------------------------
