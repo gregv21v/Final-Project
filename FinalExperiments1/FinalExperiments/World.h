@@ -26,6 +26,8 @@
 #include <Windows.h>
 #include <MMSystem.h>
 #include <thread>
+#include <vector>
+#include <glm\glm.hpp>
 
 #include "LoadShaders.h"
 #include "vgl.h"
@@ -38,10 +40,10 @@
 #include "Camera.h"
 #include "ShadowMap.h"
 #include "Window.h"
+#include "Block.h"
+#include "Line.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
-
-#define NUM_TEXTURES 2 
 
 using glm::mat4;
 
@@ -67,6 +69,7 @@ public:
 	//--------------------------------------------
 
 	void draw(Shader);
+	void simpleDraw();
 	void initValues();				// initializes values
 	void initLights();				// initializes lights ( edit values in this function )
 	void setupTextures();
@@ -83,6 +86,7 @@ private:
 	// Shaders
 	//---------------------------------------
 	Shader shader;
+	Shader simpleShader;
 	Shader shadowMapShader;
 	//---------------------------------------
 
@@ -98,8 +102,8 @@ private:
 	//---------------------------------------
 	// Textures
 	//---------------------------------------
-	std::string textureFilenames[NUM_TEXTURES];
-	Texture* textures[NUM_TEXTURES];
+	std::vector<std::string> textureFilenames;
+	std::vector<Texture*> textures;
 	//---------------------------------------
 
 	//---------------------------------------
@@ -140,5 +144,12 @@ private:
 	int win_full_prev_width;
 	int win_full_prev_height;
 	//---------------------------------------
+
+
+
+	// for testing only
+	std::vector<Block *> _blocks;
+	Line ray;
+
 };
 

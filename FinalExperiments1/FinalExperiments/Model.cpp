@@ -38,7 +38,7 @@ void Model::draw(Shader shader)
 	glVertexAttrib4fv(vModelMatrix1, &transform[1][0]);
 	glVertexAttrib4fv(vModelMatrix2, &transform[2][0]);
 	glVertexAttrib4fv(vModelMatrix3, &transform[3][0]);
-	glVertexAttrib4fv(vColor, &color.red);
+	glVertexAttrib4fv(vColor, &color._red);
 	glVertexAttrib4fv(vNormalMatrix0, &nTransform[0][0]);
 	glVertexAttrib4fv(vNormalMatrix1, &nTransform[1][0]);
 	glVertexAttrib4fv(vNormalMatrix2, &nTransform[2][0]);
@@ -86,9 +86,7 @@ void Model::rotate(float angle, vec3 inAxis)
 
 void Model::updateCenter()
 {
-	center.x = transform[3][0];
-	center.y = transform[3][1];
-	center.z = transform[3][2];
+	center = transform[3];
 }
 
 // Loading Stuff
@@ -102,6 +100,20 @@ void Model::init(string filename)
 	//normalizeNormals();
 	cout << "Done.\n";
 
+	init();
+
+	transform = mat4();
+	//updateNormalMat();
+	center = vec4(0.0, 0.0, 0.0, 1.0);
+
+	isTransformed = 1;
+	calculateDimentions();
+
+	color = { 1, 1, 1, 1 };
+}
+
+void Model::init()
+{
 	// create Vertex Array
 	glGenVertexArrays(1, VAOs);
 	glBindVertexArray(VAOs[0]);
@@ -137,15 +149,6 @@ void Model::init(string filename)
 		glBufferData(GL_ARRAY_BUFFER, textureIDs.size() * sizeof(int), &textureIDs[0], GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(vTexture, 1, GL_INT, GL_FALSE, 0, 0);
 	}
-
-	transform = mat4();
-	//updateNormalMat();
-	center = vec4(0.0, 0.0, 0.0, 1.0);
-
-	isTransformed = 1;
-	calculateDimentions();
-
-	color = { 1, 1, 1, 1 };
 }
 
 // Gets vertex, texel, normal data

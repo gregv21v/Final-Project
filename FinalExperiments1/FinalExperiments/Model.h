@@ -40,6 +40,7 @@ public:
 
 	void draw(Shader);
 	void init(string);
+	void init();
 	void loadObject(string);
 	void normalizeNormals();
 
@@ -69,35 +70,14 @@ public:
 
 private:
 
-	vector<vec4> vertices;
 	vector<vec2> texels;
 	vector<vec3> normals;
 	vector<int> textureIDs;
 	Texture* texture;
 
-	//---------------------------------------------------------
-	// Declare Data (Vertex Arrays and Buffers)
-	//---------------------------------------------------------
-	enum { POS_BUFFER, TEXEL_BUFFER, NORMAL_BUFFER, TEXTURE_BUFFER, NUM_BUFFERS };
+	
 
-	GLuint VAOs[1];
-	GLuint Buffers[NUM_BUFFERS];
-	//---------------------------------------------------------
-
-	//---------------------------------------------------------
-	// Vertex Attributes
-	//---------------------------------------------------------
-	enum {
-		vPosition, vTexel, vNormal, vTexture, vIsTextured, vIsTransformed,
-		vModelMatrix0, vModelMatrix1, vModelMatrix2, vModelMatrix3, vColor,
-		vNormalMatrix0, vNormalMatrix1, vNormalMatrix2
-	};
-	//---------------------------------------------------------
-
-	int isTransformed;
-	GLuint isTextured;
-
-	Color color;
+	
 
 	float width;
 	float height;
@@ -115,5 +95,30 @@ private:
 protected:
 
 	string name;
+	vector<vec4> vertices;
+
+	//---------------------------------------------------------
+	// Declare Data (Vertex Arrays and Buffers)
+	//---------------------------------------------------------
+	enum { POS_BUFFER, TEXEL_BUFFER, NORMAL_BUFFER, TEXTURE_BUFFER, NUM_BUFFERS };
+
+	GLuint VAOs[1];
+	GLuint Buffers[NUM_BUFFERS];
+	//---------------------------------------------------------
+
+
+	//---------------------------------------------------------
+	// Vertex Attributes
+	//---------------------------------------------------------
+	enum {
+		vPosition, vTexel, vNormal, vTexture, vIsTextured, vIsTransformed,
+		vModelMatrix0, vModelMatrix1, vModelMatrix2, vModelMatrix3, vColor,
+		vNormalMatrix0, vNormalMatrix1, vNormalMatrix2
+	};
+	//---------------------------------------------------------
+
+	GLuint isTransformed;
+	GLuint isTextured;
+	Color color;
 };
 

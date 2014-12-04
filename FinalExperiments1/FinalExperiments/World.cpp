@@ -15,15 +15,20 @@ World::World()
 
 World::~World()
 {
-	for (int i = 0; i < NUM_TEXTURES; i++)
+	for (int i = 0; i < textures.size(); i++)
 	{
 		delete textures[i];
+	}
+	for (int i = 0; i < _blocks.size(); i++)
+	{
+		delete _blocks[i];
 	}
 }
 
 void World::init(Window * window)
 {
 	_window = window;
+	
 
 	initValues();
 
@@ -38,6 +43,7 @@ void World::init(Window * window)
 
 	// initialize shaders
 	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag");
+	simpleShader.init("Shaders/simplified.vert", "Shaders/simplified.frag");
 	shadowMapShader.init("Shaders/shadowMap.vert", "Shaders/shadowMap.frag");
 
 	// Antialiasing
@@ -65,12 +71,16 @@ void World::initValues()
 
 	ground.init("Models/mineCraftGround.obj");
 	ground.scale(200);
+
+	ray.init();
 }
 
 void World::initLights()
 {
-	Color lightColor = { .5, .5, 1, 1 };
-	Color ambientColor = { .0, .0, .0, 1 };
+	Color lightColor;
+	lightColor.setColor(.5, .5, 1, 1);
+	Color ambientColor;
+	ambientColor.setColor(.0, .0, .0, 1);
 
 	Light* directionalLight1 = new Light();
 	lights.push_back(directionalLight1);
@@ -79,8 +89,8 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setIsEnabled(true);
 	lights.at(DIRECTIONAL_1)->setIsLocal(false);
 	lights.at(DIRECTIONAL_1)->setIsSpot(false);
-	lights.at(DIRECTIONAL_1)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
-	lights.at(DIRECTIONAL_1)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
+	lights.at(DIRECTIONAL_1)->setAmbient(vec3(ambientColor._red, ambientColor._green, ambientColor._blue));
+	lights.at(DIRECTIONAL_1)->setColor(vec3(lightColor._red, lightColor._green, lightColor._blue));
 	lights.at(DIRECTIONAL_1)->setPosition(vec3(-10, 10, 10));
 	lights.at(DIRECTIONAL_1)->setHalfVector(vec3(0, 0, 0));
 	lights.at(DIRECTIONAL_1)->setConeDirection(vec3(0, 0, -1));
@@ -91,16 +101,16 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setQuadraticAttenuation(.005);
 	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(true);
 
-	lightColor = { 1, .5, .5, 1 };
-	ambientColor = { .0, .0, .0, 1 };
+	lightColor.setColor(1, .5, .5, 1);
+	ambientColor.setColor(.0, .0, .0, 1);
 
 	Light* directionalLight2 = new Light();
 	lights.push_back(directionalLight2);
 
 	// init light values
 	lights.at(DIRECTIONAL_2)->setIsEnabled(true);
-	lights.at(DIRECTIONAL_2)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
-	lights.at(DIRECTIONAL_2)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
+	lights.at(DIRECTIONAL_2)->setAmbient(vec3(ambientColor._red, ambientColor._green, ambientColor._blue));
+	lights.at(DIRECTIONAL_2)->setColor(vec3(lightColor._red, lightColor._green, lightColor._blue));
 	lights.at(DIRECTIONAL_2)->setPosition(vec3(10, 10, 10));
 	lights.at(DIRECTIONAL_2)->setIsShadowMapEnabled(true);
 
@@ -112,8 +122,8 @@ void World::initLights()
 
 	// init light values
 	lights.at(DIRECTIONAL_3)->setIsEnabled(true);
-	lights.at(DIRECTIONAL_3)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
-	lights.at(DIRECTIONAL_3)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
+	lights.at(DIRECTIONAL_3)->setAmbient(vec3(ambientColor._red, ambientColor._green, ambientColor._blue));
+	lights.at(DIRECTIONAL_3)->setColor(vec3(lightColor._red, lightColor._green, lightColor._blue));
 	lights.at(DIRECTIONAL_3)->setPosition(vec3(0, 10, -10));
 	lights.at(DIRECTIONAL_3)->setIsShadowMapEnabled(true);
 
@@ -124,16 +134,16 @@ void World::setupTextures()
 {
 
 	// Texture Files
-	textureFilenames[0] = "Textures/MineCraft.png";
-	textureFilenames[1] = "Textures/MineCraftGround.png";
+	textureFilenames.push_back("Textures/MineCraft.png");
+	textureFilenames.push_back("Textures/MineCraftGround.png");
 
-	for (int i = 0; i < NUM_TEXTURES; i++)
+	for (int i = 0; i < textureFilenames.size(); i++)
 	{
-		textures[i] = new Texture();
-		textures[i]->loadFromFile(textureFilenames[i]);
+		textures.push_back(new Texture());
+		textures.back()->loadFromFile(textureFilenames[i]);
+		textures.back()->load();
 	}
-	textures[0]->load();
-	textures[1]->load();
+
 	cube.setTexture(textures[0]);
 	ground.setTexture(textures[1]);
 }
@@ -144,14 +154,19 @@ void World::display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	renderShadowMaps();
+	
+	
 
 	// use main shader
 	shader.use();
-
 	setUniforms();
 	draw(shader);
-
 	shader.unuse();
+
+	simpleDraw();
+
+	
+	
 	
 	// swap the buffers at the end of the display sequence
 	glutSwapBuffers();
@@ -193,8 +208,21 @@ void World::setUniforms()
 
 void World::draw(Shader in_shader)
 {
-	cube.draw(in_shader);
+	//cube.draw(in_shader);
 	ground.draw(in_shader);
+	
+	for (int i = 0; i < _blocks.size(); i++)
+	{
+		_blocks[i]->draw(shader);
+	}
+}
+
+void World::simpleDraw()
+{
+	simpleShader.use();
+	cam.setUniforms(simpleShader);
+	ray.draw();
+	simpleShader.unuse();
 }
 
 void World::keyPress(unsigned char key, int x, int y)
@@ -287,7 +315,11 @@ void World::idleFunc()
 
 void World::mouseFunc(int button, int state, float x, float y)
 {
-	vec4 rayClip, rayEye, rayWorld;
+	vec4 rayClip, rayEye;
+	vec3 rayWorld, N, intersection, origin;
+
+	float t, divisor, D = 0;
+	Block * block;
 	switch (button)
 	{
 		//-------------------------------------------------------
@@ -295,13 +327,44 @@ void World::mouseFunc(int button, int state, float x, float y)
 		//-------------------------------------------------------
 	case GLUT_LEFT_BUTTON:
 		// cast a ray to the terrain
-		rayClip = vec4(x, y, -1.0f, 1.0f);
+		rayClip = vec4(x, y, 1.0f, 1.0f);
 		rayEye = cam.convertToEyeSpace(rayClip);
 		rayEye = vec4(glm::vec2(rayEye), -1.0f, 1.0f);
-		rayWorld = cam.convertToWorldSpace(rayEye);
-
+		rayWorld = vec3(cam.convertToWorldSpace(rayEye));
+		//rayWorld = glm::normalize(rayWorld);
+		origin = cam.getEyePosition();
+		N = vec3(0, -1.0f, 0);
+		divisor = glm::dot(N, rayWorld);
+		D = glm::distance(vec3(ground.center), cam.getEyePosition());
+		
+		if (divisor != 0)
+		{
+			t = -(glm::dot(N, origin) + D) / divisor;
+			ray.setStart(origin);
+			cout << "t: " << t << endl;
+			//ray.setEnd(origin + 10.0f * rayWorld);
+			//ray.setEnd(intersection);
+			if (t > 0)
+			{
+				cout << "Ray intersected with plane." << endl;
+				intersection = origin + t * rayWorld;
+				//intersection *= 200;
+				ray.setEnd(intersection);
+				if (intersection.x < 200 && intersection.x > -200 && intersection.z < 200 && intersection.z > -200)
+				{
+					cout << "Block added" << endl;
+					block = new Block();
+					block->init("Models/mineCraftCube.obj");
+					block->translate(intersection.x * 200, intersection.y, intersection.z * 200);
+					block->setTexture(textures[0]);
+					_blocks.push_back(block);
+					cout << "Intersection: ( " << intersection.x << " , " << intersection.y << " , " << intersection.z << " )" << endl;
+				}
+			}
+		}
 
 		cout << "Ray Position: ( " << rayWorld.x << " , " << rayWorld.y << " , " << rayWorld.z << " )" << endl;
+
 
 		
 

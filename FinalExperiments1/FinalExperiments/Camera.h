@@ -102,9 +102,9 @@ private:
 	
 
 	mat4 view;
+	mat4 frustum;
 	mat4 eyeRotate;
 	mat4 position;
-	mat4 frustum;
 	mat4 rotateMatrix;
 
 };
