@@ -80,6 +80,10 @@ public:
 	void setFrustum(float, float, float, float, float, float);
 	vec4 convertToEyeSpace(vec4 point);
 	vec4 convertToWorldSpace(vec4 point);
+	vec4 unproject(vec4 point);
+
+	mat4 getFrustum();
+
 
 private:
 

@@ -29,6 +29,7 @@ void World::init(Window * window)
 {
 	_window = window;
 	
+	globalProperties.shadow_maps_on = false;
 
 	initValues();
 
@@ -315,55 +316,58 @@ void World::idleFunc()
 
 void World::mouseFunc(int button, int state, float x, float y)
 {
-	vec4 rayClip, rayEye;
-	vec3 rayWorld, N, intersection, origin;
+	vec3 farPoint, nearPoint, origin, direction, intersection, rayWorld, N;
 
-	float t, divisor, D = 0;
+	vec4 rayClip, rayEye;
+	float t;
 	Block * block;
+
 	switch (button)
 	{
 		//-------------------------------------------------------
 		// Left Button ( Mod Terrain )
 		//-------------------------------------------------------
 	case GLUT_LEFT_BUTTON:
-		// cast a ray to the terrain
+	
 		rayClip = vec4(x, y, 1.0f, 1.0f);
 		rayEye = cam.convertToEyeSpace(rayClip);
-		rayEye = vec4(glm::vec2(rayEye), -1.0f, 1.0f);
+		rayEye = vec4(glm::vec2(rayEye), -1.0f, 0.0f);
 		rayWorld = vec3(cam.convertToWorldSpace(rayEye));
-		//rayWorld = glm::normalize(rayWorld);
+		rayWorld = glm::normalize(rayWorld);
 		origin = cam.getEyePosition();
-		N = vec3(0, -1.0f, 0);
-		divisor = glm::dot(N, rayWorld);
-		D = glm::distance(vec3(ground.center), cam.getEyePosition());
-		
-		if (divisor != 0)
+		direction = rayWorld;
+
+
+	
+
+		ray.setStart(nearPoint);
+		t = -origin.y / direction.y;
+
+		cout << "t: " << t << endl;
+		if (t != 0)
 		{
-			t = -(glm::dot(N, origin) + D) / divisor;
-			ray.setStart(origin);
-			cout << "t: " << t << endl;
-			//ray.setEnd(origin + 10.0f * rayWorld);
-			//ray.setEnd(intersection);
-			if (t > 0)
+			cout << "Ray intersected with plane." << endl;
+			
+			intersection = origin + t * direction;
+			
+			ray.setEnd(intersection);
+			if (intersection.x < 200 && intersection.x > -200 && intersection.z < 200 && intersection.z > -200)
 			{
-				cout << "Ray intersected with plane." << endl;
-				intersection = origin + t * rayWorld;
-				//intersection *= 200;
-				ray.setEnd(intersection);
-				if (intersection.x < 200 && intersection.x > -200 && intersection.z < 200 && intersection.z > -200)
-				{
-					cout << "Block added" << endl;
-					block = new Block();
-					block->init("Models/mineCraftCube.obj");
-					block->translate(intersection.x * 200, intersection.y, intersection.z * 200);
-					block->setTexture(textures[0]);
-					_blocks.push_back(block);
-					cout << "Intersection: ( " << intersection.x << " , " << intersection.y << " , " << intersection.z << " )" << endl;
-				}
+				cout << "Block added" << endl;
+				block = new Block();
+				block->init("Models/mineCraftCube.obj");
+				block->translate(intersection.x, intersection.y + 1.0f, intersection.z);
+				block->setTexture(textures[0]);
+				_blocks.push_back(block);
+				
 			}
+			
 		}
 
-		cout << "Ray Position: ( " << rayWorld.x << " , " << rayWorld.y << " , " << rayWorld.z << " )" << endl;
+		cout << "Intersection: ( " << intersection.x << " , " << intersection.y << " , " << intersection.z << " )" << endl;
+		cout << "Origin: ( " << origin.x << " , " << origin.y << " , " << origin.z << " )" << endl;
+		cout << "Direction: ( " << direction.x << " , " << direction.y << " , " << direction.z << " )" << endl;
+
 
 
 		
@@ -373,16 +377,15 @@ void World::mouseFunc(int button, int state, float x, float y)
 		//-------------------------------------------------------
 		// Wheel Button ( Camera Panning )
 		//-------------------------------------------------------
-	case 1:
+	case GLUT_MIDDLE_BUTTON:
 		if (state == GLUT_DOWN)
 			pan_camera = true;			
-		else
-			pan_camera = false;		
+		else			pan_camera = false;		
 		break;
 		//-------------------------------------------------------
 		// Right Button ( Camera Movement xz-plane )
 		//-------------------------------------------------------
-	case 2:
+	case GLUT_RIGHT_BUTTON:
 		if (state == GLUT_DOWN)
 			move_camera = true;				
 		else
@@ -415,6 +418,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 
 void World::motionFunc(float x, float y)
 {
+
 	if (pan_camera)
 	{
 		vec2 move_direction = vec2(x - mouse_prev_x, y - mouse_prev_y);

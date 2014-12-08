@@ -1,7 +1,7 @@
 #version 330 core
 
 
-uniform mat4 VMatrix;
+uniform mat4 VPMatrix;
 
 
 
@@ -15,6 +15,6 @@ out vec4 vertColor;
 
 void main()
 {
-	gl_Position = VMatrix * in_position;
+	gl_Position = VPMatrix * in_position;
 	vertColor = in_color;
 }
