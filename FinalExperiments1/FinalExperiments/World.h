@@ -36,8 +36,9 @@
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
-#define NUM_TEXTURES 2 
-
+#define NUM_TEXTURES 3	// grass, rock, snow
+#define MAIN_CAM 0
+#define OVERHEAD 1
 
 using glm::mat4;
 
@@ -62,14 +63,16 @@ public:
 	void reshapeFunc(int, int);
 	//--------------------------------------------
 
+	void renderOverhead();
 	void draw(Shader);
 	void initValues();				// initializes values
 	void initLights();				// initializes lights ( edit values in this function )
+	void initOverheadCam();
 	void setupTextures();
 	void renderShadowMaps();
 	void setUniforms();
 
-	void setupTerrain(int, int);
+	void setupTerrain();
 
 	void idleFunc();
 
@@ -102,6 +105,7 @@ private:
 	// Camera
 	//---------------------------------------
 	vector<Camera*> cams;
+	Camera overhead;
 	bool pan_camera;
 	bool move_camera;
 	int current_camera;
@@ -143,6 +147,16 @@ private:
 	// Terrain
 	//---------------------------------------
 	Terrain terrain;
+	int target[2];
+	//---------------------------------------
+
+	//---------------------------------------
+	// Overhead Camera Framebuffer / Renderbuffer
+	//---------------------------------------
+	enum{ OH_CAM_FB, NUM_FBS };
+	GLuint FBs[NUM_FBS];
+	enum{ OH_CAM_RB, NUM_RBS };
+	GLuint RBs[NUM_RBS];
 	//---------------------------------------
 };
 

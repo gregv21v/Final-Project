@@ -17,11 +17,11 @@ Texture::~Texture()
 		glDeleteTextures(1, &_id);
 }
 
-void Texture::activate(GLint uniformLocation)
+void Texture::activate(GLint uniformLocation, int loc)
 {
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + loc);
 	glBindTexture(GL_TEXTURE_2D, _id);
-	glUniform1i(uniformLocation, 0);
+	glUniform1i(uniformLocation, loc);
 }
 
 void Texture::deactivate()
@@ -69,4 +69,14 @@ void Texture::load()
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+int Texture::getWidth()
+{
+	return _width;
+}
+
+int Texture::getHeight()
+{
+	return _height;
 }

@@ -36,6 +36,7 @@ public:
 	void draw();
 	void endDraw();
 
+
 private:
 
 	GLuint depth_texture;

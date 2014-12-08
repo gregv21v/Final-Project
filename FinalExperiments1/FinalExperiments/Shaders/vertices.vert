@@ -1,20 +1,29 @@
 #version 330 core
 
-uniform mat4 VPMatrix;		// view projection matrix
-uniform mat4 VMatrix;
 
 const int maxLights = 3;		// *** Change this when adding lights ***
+const int maxTextures = 3;		// *** Change this when adding textures ***
 
 struct ShadowMatrices {
 	mat4 ShadowMatrix;
 };
 
+struct TerrainProperties{
+	int width;
+	int height;
+	int tileFactor;
+};
+
 uniform ShadowMatrices shadowMatrices[maxLights];
+uniform TerrainProperties terrainProperties;
+
+uniform mat4 VPMatrix;		// view projection matrix
+uniform mat4 VMatrix;
 
 layout(location = 0) in vec4 in_position;
 layout(location = 1) in vec2 in_texel;
 layout(location = 2) in vec3 in_normal;
-layout(location = 4) in int	in_isTextured;
+layout(location = 4) in int in_isTextured;
 layout(location = 5) in int	in_isTransformed;		// if the object is allowed to translate
 
 layout(location = 6) in mat4 ModelMatrix;			// the model translation
@@ -26,16 +35,18 @@ out vec4 shadow_coord[maxLights];
 out vec4 vertColor;
 out vec3 vertNormal;
 out vec2 vertTexCoord;
+out vec2 vertTexCoord_xy;
+out vec2 vertTexCoord_zy;
+out vec2 vertTexCoord_xz;
 out vec4 vertPosition;
-
-flat out int vertIsTextured;
+out vec4 world_pos;
+out int vertIsTextured;
 
 void main()
 {
-	
 	if(in_isTransformed == 1)
 	{
-		vec4 world_pos = ModelMatrix * in_position;
+		world_pos = ModelMatrix * in_position;
 		vec4 eye_pos = VMatrix * world_pos;
 		vec4 clip_pos = VPMatrix * world_pos;
 
@@ -55,7 +66,7 @@ void main()
 	}
 	else
 	{
-		vec4 world_pos = in_position;
+		world_pos = in_position;
 		vec4 eye_pos = VMatrix * world_pos;
 		vec4 clip_pos = VPMatrix * world_pos;
 
@@ -70,6 +81,13 @@ void main()
 	}
 
 	vertColor = in_color;
-	vertTexCoord = in_texel;
+
+	vertTexCoord = vec2((in_position.x / terrainProperties.width),(in_position.z / terrainProperties.height)) * terrainProperties.tileFactor;
+
+	vertTexCoord_xz = vec2((in_position.x / terrainProperties.width),(in_position.z / terrainProperties.height)) * terrainProperties.tileFactor;
+	vertTexCoord_xy = vec2((in_position.x / terrainProperties.width),(in_position.y / 50)) * terrainProperties.tileFactor;
+	vertTexCoord_zy = vec2((in_position.z / terrainProperties.height),(in_position.y /50)) * terrainProperties.tileFactor;
+	//vertTexCoord = in_position.xz;
+	
 	vertIsTextured = in_isTextured;
 }

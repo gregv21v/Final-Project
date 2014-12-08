@@ -5,7 +5,7 @@ World::World()
 	srand(time(NULL));
 
 	globalProperties.lighting_on = true;
-	globalProperties.shadow_maps_on = true;
+	globalProperties.shadow_maps_on = false;
 
 	mouse_prev_x = 0;
 	mouse_prev_y = 0;
@@ -32,13 +32,18 @@ void World::init(int in_width,int in_height)
 
 	initLights();
 
+	
+
 	// initialize cameras
 	Camera* temp1 = new Camera();
-	temp1->init(0, 10, 20);
+	temp1->init(50, 20, 50);
+	//temp1->setIsOrtho(true);
 	cams.push_back(temp1);
 	//Camera* temp2 = new Camera();
 	//temp2->init(0, 10, 20);
 	//cams.push_back(temp2);
+
+	initOverheadCam();
 
 	// initialize shaders
 	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag");
@@ -61,7 +66,7 @@ void World::init(int in_width,int in_height)
 
 	glClearColor(0, 0, 0, 0);
 
-	terrain.init();
+	setupTerrain();
 }
 
 void World::initValues()
@@ -75,7 +80,7 @@ void World::initValues()
 
 void World::initLights()
 {
-	Color lightColor = { .5, .5, 1, 1 };
+	Color lightColor = { 1, 1, 1, 1 };
 	Color ambientColor = { .0, .0, .0, 1 };
 
 	Light* directionalLight1 = new Light();
@@ -87,7 +92,7 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setIsSpot(false);
 	lights.at(DIRECTIONAL_1)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
 	lights.at(DIRECTIONAL_1)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
-	lights.at(DIRECTIONAL_1)->setPosition(vec3(-10, 10, 10));
+	lights.at(DIRECTIONAL_1)->setPosition(vec3(100, 100, -100));
 	lights.at(DIRECTIONAL_1)->setHalfVector(vec3(0, 0, 0));
 	lights.at(DIRECTIONAL_1)->setConeDirection(vec3(0, 0, -1));
 	lights.at(DIRECTIONAL_1)->setSpotCosCutoff(.9);
@@ -95,10 +100,18 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setConstantAttenuation(.05);
 	lights.at(DIRECTIONAL_1)->setLinearAttenuation(.005);
 	lights.at(DIRECTIONAL_1)->setQuadraticAttenuation(.005);
-	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(true);
+	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(false);
 
-	lightColor = { 1, .5, .5, 1 };
-	ambientColor = { .0, .0, .0, 1 };
+	
+	lightColor.red = 1;
+	lightColor.green = 1;
+	lightColor.blue = 1;
+	lightColor.alpha = 1;
+
+	ambientColor.red = 0;
+	ambientColor.green = 0;
+	ambientColor.blue = 0;
+	ambientColor.alpha = 1;
 
 	Light* directionalLight2 = new Light();
 	lights.push_back(directionalLight2);
@@ -107,11 +120,18 @@ void World::initLights()
 	lights.at(DIRECTIONAL_2)->setIsEnabled(true);
 	lights.at(DIRECTIONAL_2)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
 	lights.at(DIRECTIONAL_2)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
-	lights.at(DIRECTIONAL_2)->setPosition(vec3(10, 10, 10));
-	lights.at(DIRECTIONAL_2)->setIsShadowMapEnabled(true);
+	lights.at(DIRECTIONAL_2)->setPosition(vec3(-100, 100, 100));
+	lights.at(DIRECTIONAL_2)->setIsShadowMapEnabled(false);
 
-	lightColor = { .5, 1, .5, 1 };
-	ambientColor = { .0, .0, .0, 1 };
+	lightColor.red = 1;
+	lightColor.green = 1;
+	lightColor.blue = 1;
+	lightColor.alpha = 1;
+
+	ambientColor.red = 0;
+	ambientColor.green = 0;
+	ambientColor.blue = 0;
+	ambientColor.alpha = 1;
 
 	Light* directionalLight3 = new Light();
 	lights.push_back(directionalLight3);
@@ -120,28 +140,53 @@ void World::initLights()
 	lights.at(DIRECTIONAL_3)->setIsEnabled(true);
 	lights.at(DIRECTIONAL_3)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
 	lights.at(DIRECTIONAL_3)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
-	lights.at(DIRECTIONAL_3)->setPosition(vec3(0, 10, -10));
-	lights.at(DIRECTIONAL_3)->setIsShadowMapEnabled(true);
+	lights.at(DIRECTIONAL_3)->setPosition(vec3(100, 100, 100));
+	lights.at(DIRECTIONAL_3)->setIsShadowMapEnabled(false);
 
-	ambientLight = vec3(.1, .1, .1);
+	ambientLight = vec3(.5, .5, .5);
+}
+
+void World::initOverheadCam()
+{
+	Camera* tempOverhead = new Camera();
+	cams.push_back(tempOverhead);
+
+	cams.at(OVERHEAD)->init(0,0,0);
+	cams.at(OVERHEAD)->setIsOrtho(true);
+	cams.at(OVERHEAD)->setView(glm::lookAt(vec3(50, 50, 50), vec3(50, 0, 50), vec3(0, 1, 0)));
+
+	glGenFramebuffers(NUM_FBS, FBs);
+	glGenRenderbuffers(NUM_RBS, RBs);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, FBs[OH_CAM_FB]);
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[OH_CAM_RB]);
+
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, window_width, window_height);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		GL_RENDERBUFFER, RBs[OH_CAM_RB]);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void World::setupTextures()
 {
 
 	// Texture Files
-	textureFilenames[0] = "Textures/MineCraft.png";
-	textureFilenames[1] = "Textures/MineCraftGround.png";
+	textureFilenames[0] = "Textures/Grass.png";
+	textureFilenames[1] = "Textures/Rock.png";
+	textureFilenames[2] = "Textures/Snow.png";
 
 	for (int i = 0; i < NUM_TEXTURES; i++)
 	{
 		textures[i] = new Texture();
 		textures[i]->loadFromFile(textureFilenames[i]);
 	}
+
 	textures[0]->load();
 	textures[1]->load();
-	cube.setTexture(textures[0]);
-	ground.setTexture(textures[1]);
+	textures[2]->load();
 }
 
 void World::display()
@@ -149,16 +194,35 @@ void World::display()
 	// clear color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	renderShadowMaps();
+	if (globalProperties.shadow_maps_on)
+		renderShadowMaps();
 
 	// use main shader
 	shader.use();
 
+	renderOverhead();
+
+	current_camera = MAIN_CAM;
 	setUniforms();
 	draw(shader);
 
 	shader.unuse();
-	
+
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBs[OH_CAM_FB]);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(
+		0,
+		0,
+		window_width,
+		window_height,
+		map(-.975, -1.0, 1.0, 0, window_width),
+		map(.5, -1.0, 1.0, 0, window_height),
+		map(-.5, -1.0, 1.0, 0, window_width),
+		map(.975, -1.0, 1.0, 0, window_height),
+		GL_COLOR_BUFFER_BIT, 
+		GL_NEAREST);
+
 	// swap the buffers at the end of the display sequence
 	glutSwapBuffers();
 }
@@ -182,10 +246,15 @@ void World::setUniforms()
 	// setup global uniforms
 	glUniform3f(shader.getUniformLocation("EyeDirection"), 0, 0, 0);
 	glUniform3f(shader.getUniformLocation("Ambient"), ambientLight.x, ambientLight.y, ambientLight.z);
-	glUniform1f(shader.getUniformLocation("Strength"), .5);
-	glUniform1f(shader.getUniformLocation("Shininess"), 10);
+	glUniform1f(shader.getUniformLocation("Strength"), .1);
+	glUniform1f(shader.getUniformLocation("Shininess"), 100);
 	glUniform1i(shader.getUniformLocation("LightingOn"), globalProperties.lighting_on);
 	glUniform1i(shader.getUniformLocation("ShadowsOn"), globalProperties.shadow_maps_on);
+	
+	textures[0]->activate(shader.getUniformLocation("tex[0]"), 0);
+	textures[1]->activate(shader.getUniformLocation("tex[1]"), 1);
+	textures[2]->activate(shader.getUniformLocation("tex[2]"), 2);
+	terrain.setupUniforms(shader);
 
 	// setup lighting uniforms
 	for (int i = 0; i < lights.size(); i++)
@@ -195,6 +264,21 @@ void World::setUniforms()
 
 	// setup camera uniforms
 	cams.at(current_camera)->setUniforms(shader);
+}
+
+void World::renderOverhead()
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBs[OH_CAM_FB]);
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[OH_CAM_FB]);
+
+	current_camera = OVERHEAD;
+
+	setUniforms();
+	draw(shader);
+
+	// Unbind the GUI frame buffer and render buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void World::draw(Shader in_shader)
@@ -208,6 +292,40 @@ void World::keyPress(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
+	//--------------------------------------------------------------------------------------
+	// Terrain Manipulation
+	//--------------------------------------------------------------------------------------
+	case 'z':
+		terrain.mound(target[0], target[1], 1);
+		break;
+	case 'x':
+		terrain.mound(target[0], target[1], -1);
+		break;
+	case 'u':
+		target[1] ++;
+		break;
+	case 'j':
+		target[1] --;
+		break;
+	case 'h':
+		target[0] --;
+		break;
+	case 'k':
+		target[0] ++;
+		break;
+	case 'b':
+		terrain.increaseSize();
+		break;
+	case 'n':
+		terrain.decreaseSize();
+		break;
+	case 'i':
+		terrain.increaseRoundness();
+		break;
+	case 'o':
+		terrain.decreaseRoundness();
+		break;
+	//--------------------------------------------------------------------------------------
 	case 'c':
 		current_camera = (current_camera + 1) % cams.size();
 		break;
@@ -415,7 +533,15 @@ void World::reshapeFunc(int w, int h)
 		.3, 10000);
 }
 
-void World::setupTerrain(int width, int height)
+void World::setupTerrain()
 {
+	terrain.init();
 
+	target[0] = terrain.getWidth()/2;
+	target[1] = terrain.getHeight()/2;
+
+	terrain.setTileFactor(5);
+	terrain.setSize(15);
+
+	terrain.setIsTextured(true);
 }

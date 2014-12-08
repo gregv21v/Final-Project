@@ -79,6 +79,8 @@ public:
 
 	void setFrustum(float, float, float, float, float, float);
 
+	void setIsOrtho(bool);
+
 private:
 
 	float eye_x;
@@ -101,10 +103,13 @@ private:
 
 	vec3 totalRotation;
 
+	bool is_ortho;
+
 	mat4 view;
 	mat4 eyeRotate;
 	mat4 position;
 	mat4 frustum;
+	mat4 ortho;
 	mat4 rotateMatrix;
 };
 

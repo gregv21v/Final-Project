@@ -166,7 +166,11 @@ void Camera::init(float x, float y, float z)
 	mat4 translate = glm::translate(glm::mat4(), -eyePosition);
 	rotateMatrix = glm::mat4();
 	view = translate;
-	frustum = glm::frustum((float)-1, (float)1, (float)-1, (float)1, (float).3, (float)10000);
+
+	frustum = glm::frustum((float)-1.0, (float)1.0, (float)-1.0, (float)1.0, (float)0.3, (float)10000);
+	ortho = glm::ortho((float)-1.0, (float)1.0, (float)-1.0, (float)1.0, (float)0.3, (float)10000);
+
+	is_ortho = false;
 }
 
 void Camera::updateEyeDirection(mat4 inMat)
@@ -194,7 +198,15 @@ vec3 Camera::getTotalRotation()
 // Sets up uniform for the View Projection Matrix
 void Camera::setUniforms(Shader shader)
 {
-	glUniformMatrix4fv(shader.getUniformLocation("VPMatrix"), 1, GL_FALSE, glm::value_ptr(frustum * rotateMatrix * view));
+	if (is_ortho)
+	{
+		glUniformMatrix4fv(shader.getUniformLocation("VPMatrix"), 1, GL_FALSE, glm::value_ptr(ortho * rotateMatrix * view));
+	}
+	else
+	{
+		glUniformMatrix4fv(shader.getUniformLocation("VPMatrix"), 1, GL_FALSE, glm::value_ptr(frustum * rotateMatrix * view));
+	}
+	
 	glUniformMatrix4fv(shader.getUniformLocation("VMatrix"), 1, GL_FALSE, glm::value_ptr(rotateMatrix * view));
 }
 
@@ -242,4 +254,9 @@ void Camera::setView(mat4 inView)
 void Camera::setFrustum(float in_left, float in_right, float in_bottom, float in_top, float in_near, float in_far)
 {
 	frustum = glm::frustum(in_left, in_right, in_bottom, in_top, in_near, in_far);
+}
+
+void Camera::setIsOrtho(bool in_ortho)
+{
+	is_ortho = in_ortho;
 }

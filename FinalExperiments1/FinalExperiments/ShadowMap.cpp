@@ -69,18 +69,11 @@ void ShadowMap::render(Shader shader)
 void ShadowMap::use(Shader shader,int i)
 {
 	shader.use();
-	//cout << "ShadowMatrix: " << shader.getUniformLocation("ShadowMatrix") << endl;
 	glUniformMatrix4fv(shader.getUniformLocation("shadowMatrices[" + std::to_string(i) + "].ShadowMatrix"), 1, GL_FALSE, glm::value_ptr(scaleBias * frustum * view));
 
 	glUniform1i(shader.getUniformLocation("Lights[" + std::to_string(i) + "].depth_texture"), 5 + i);
-	//cout << "Active Texture Base: " << GL_TEXTURE1 << endl;
 	glActiveTexture(GL_TEXTURE5 + i);
-	//cout << "Active Texture: " << GL_TEXTURE5 + i << endl;
 	glBindTexture(GL_TEXTURE_2D, depth_texture);
-	//cout << "depth_texture: " << shader.getUniformLocation("depth_texture") << endl;
-	
-	//cout << "Shader Location: " << shader.getUniformLocation("Lights[" + to_string(i) + "].depth_texture") << endl;
-	//glUniform1i(shader.getUniformLocation("depth_texture"), 1 + i);
 }
 
 void ShadowMap::updateView(vec3 lightPosition)

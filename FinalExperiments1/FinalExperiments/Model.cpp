@@ -94,13 +94,13 @@ void Model::updateCenter()
 // Loading Stuff
 void Model::init(string filename)
 {
-	cout << "Loading Data...";
+	//cout << "Loading Data...";
 	loadObject(filename);
-	cout << "Done.\n";
+	//cout << "Done.\n";
 
-	cout << "Normalizing Normals...";
+	//cout << "Normalizing Normals...";
 	//normalizeNormals();
-	cout << "Done.\n";
+	//cout << "Done.\n";
 
 	// create Vertex Array
 	glGenVertexArrays(1, VAOs);
@@ -145,7 +145,10 @@ void Model::init(string filename)
 	isTransformed = 1;
 	calculateDimentions();
 
-	color = { 1, 1, 1, 1 };
+	color.red = 1;
+	color.green = 1;
+	color.blue = 1;
+	color.alpha = 1;
 }
 
 // Gets vertex, texel, normal data
@@ -549,7 +552,7 @@ void Model::setTexture(Texture* inTexture)
 void Model::activateTextures(Shader shader)
 {
 	if (texture != nullptr)
-		texture->activate(shader.getUniformLocation("tex"));
+		texture->activate(shader.getUniformLocation("tex"),0);
 }
 
 void Model::deactivateTextures()

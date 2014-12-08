@@ -21,10 +21,13 @@ public:
 	Texture();
 	~Texture();
 
-	void loadFromFile(std::string filename);
+	void loadFromFile(std::string);
 	void load();
-	void activate(GLint uniformLocation);
+	void activate(GLint, int);
 	void deactivate();
+
+	int getWidth();
+	int getHeight();
 
 private:
 	GLuint _id;
