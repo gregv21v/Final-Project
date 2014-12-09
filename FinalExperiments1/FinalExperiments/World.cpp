@@ -329,7 +329,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 		//-------------------------------------------------------
 	case GLUT_LEFT_BUTTON:
 	
-		rayClip = vec4(x, y, 1.0f, 1.0f);
+		rayClip = vec4(x, y, -1.0f, 1.0f);
 		rayEye = cam.convertToEyeSpace(rayClip);
 		rayEye = vec4(glm::vec2(rayEye), -1.0f, 0.0f);
 		rayWorld = vec3(cam.convertToWorldSpace(rayEye));
