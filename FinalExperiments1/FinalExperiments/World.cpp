@@ -1,6 +1,6 @@
 #include "World.h"
 
-World::World()
+World::World() : moundY(1), activeTool(NONE)
 {
 	srand(time(NULL));
 
@@ -296,10 +296,10 @@ void World::keyPress(unsigned char key, int x, int y)
 	// Terrain Manipulation
 	//--------------------------------------------------------------------------------------
 	case 'z':
-		terrain.mound(target[0], target[1], 1);
+		moundY = 1;
 		break;
 	case 'x':
-		terrain.mound(target[0], target[1], -1);
+		moundY = -1;
 		break;
 	case 'u':
 		target[1] ++;
@@ -423,13 +423,21 @@ void World::mouseFunc(int button, int state, float x, float y)
 		// Left Button ( Mod Terrain )
 		//-------------------------------------------------------
 	case GLUT_LEFT_BUTTON:
-		ray.fromMouse(x, y, cams[current_camera]);
-
-		if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+		if (state == GLUT_DOWN)
 		{
-			intersection = ray.getIntersection();
-			terrain.mound(intersection.x, intersection.z, 1);
+			ray.fromMouse(x, y, cams[current_camera]);
+			if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+			{
+				intersection = ray.getIntersection();
+				terrain.mound(intersection.x, intersection.z, moundY);
+			}
+			activeTool = MOUND;
 		}
+		else 
+		{
+			activeTool = NONE;
+		}
+			
 		break;
 		//-------------------------------------------------------
 		// Wheel Button ( Camera Panning )
@@ -519,6 +527,21 @@ void World::motionFunc(float x, float y)
 		mouse_prev_x = x;
 		mouse_prev_y = y;
 	}
+
+	if (activeTool == MOUND)
+	{
+		Ray ray;
+		vec3 intersection;
+		ray.fromMouse(x, y, cams[current_camera]);
+		if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+		{
+			intersection = ray.getIntersection();
+			terrain.mound(intersection.x, intersection.z, moundY/2.0f);
+		}
+		activeTool = MOUND;
+	}
+
+
 
 	//cout << "( " << cam.getEyePosition().x << " , " << cam.getEyePosition().y << " , " << cam.getEyePosition().z << " )\n";
 

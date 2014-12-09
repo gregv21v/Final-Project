@@ -150,7 +150,14 @@ private:
 	//---------------------------------------
 	Terrain terrain;
 	int target[2];
+	int moundY;
 	//---------------------------------------
+
+	enum Tool { MOUND, NONE };
+
+	Tool activeTool;
+
+
 
 	//---------------------------------------
 	// Overhead Camera Framebuffer / Renderbuffer

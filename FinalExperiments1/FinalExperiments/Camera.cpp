@@ -273,7 +273,7 @@ vec4 Camera::convertToEyeSpace(vec4 point)
 // from eye to world space
 vec4 Camera::convertToWorldSpace(vec4 point)
 {
-	return glm::inverse(rotateMatrix * view) * point;
+	return glm::inverse(view) * point;
 }
 
 vec4 Camera::unproject(vec4 point)

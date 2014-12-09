@@ -20,7 +20,7 @@
 #include "Shader.h"
 
 #define MAX_MOVE INFINITY
-#define PI 3.14159
+#define PI 3.14159265358979323846
 #define EYE_MOVE_DEFAULT .1	
 #define LOOK_MOVE_DEFAULT 2	// in degrees
 
