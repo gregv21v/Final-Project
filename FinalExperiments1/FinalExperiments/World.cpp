@@ -415,12 +415,21 @@ void World::idleFunc()
 
 void World::mouseFunc(int button, int state, float x, float y)
 {
+	Ray ray;
+	vec3 intersection;
 	switch (button)
 	{
 		//-------------------------------------------------------
 		// Left Button ( Mod Terrain )
 		//-------------------------------------------------------
-	case 0:
+	case GLUT_LEFT_BUTTON:
+		ray.fromMouse(x, y, cams[current_camera]);
+
+		if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+		{
+			intersection = ray.getIntersection();
+			terrain.mound(intersection.x, intersection.z, 1);
+		}
 		break;
 		//-------------------------------------------------------
 		// Wheel Button ( Camera Panning )
@@ -434,7 +443,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 		//-------------------------------------------------------
 		// Right Button ( Camera Movement xz-plane )
 		//-------------------------------------------------------
-	case 2:
+	case GLUT_RIGHT_BUTTON:
 		if (state == GLUT_DOWN)
 			move_camera = true;				
 		else

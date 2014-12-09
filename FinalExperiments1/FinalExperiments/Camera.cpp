@@ -260,3 +260,27 @@ void Camera::setIsOrtho(bool in_ortho)
 {
 	is_ortho = in_ortho;
 }
+
+// from normalized device coordinates to eye space
+vec4 Camera::convertToEyeSpace(vec4 point)
+{
+	if (is_ortho)
+		return glm::inverse(ortho * rotateMatrix) * point;
+	else
+		return glm::inverse(frustum * rotateMatrix) * point;
+}
+
+// from eye to world space
+vec4 Camera::convertToWorldSpace(vec4 point)
+{
+	return glm::inverse(rotateMatrix * view) * point;
+}
+
+vec4 Camera::unproject(vec4 point)
+{
+	if (is_ortho)
+		return glm::inverse(ortho * rotateMatrix * view) * point;
+	else
+		return glm::inverse(frustum * rotateMatrix * view) * point;
+		
+}

@@ -33,6 +33,7 @@
 #include "Camera.h"
 #include "ShadowMap.h"
 #include "Terrain.h"
+#include "Ray.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
@@ -71,6 +72,7 @@ public:
 	void setupTextures();
 	void renderShadowMaps();
 	void setUniforms();
+	void castRayFromMousePosition();
 
 	void setupTerrain();
 
