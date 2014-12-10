@@ -262,6 +262,7 @@ void Camera::setIsOrtho(bool in_ortho)
 }
 
 // from normalized device coordinates to eye space
+// Mouse Picking
 vec4 Camera::convertToEyeSpace(vec4 point)
 {
 	if (is_ortho)

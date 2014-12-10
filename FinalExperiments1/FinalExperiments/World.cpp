@@ -423,6 +423,8 @@ void World::mouseFunc(int button, int state, float x, float y)
 		// Left Button ( Mod Terrain )
 		//-------------------------------------------------------
 	case GLUT_LEFT_BUTTON:
+
+		// Mouse Picking
 		if (state == GLUT_DOWN)
 		{
 			ray.fromMouse(x, y, cams[current_camera]);
@@ -527,7 +529,7 @@ void World::motionFunc(float x, float y)
 		mouse_prev_x = x;
 		mouse_prev_y = y;
 	}
-
+	// Mouse Picking
 	if (activeTool == MOUND)
 	{
 		Ray ray;
