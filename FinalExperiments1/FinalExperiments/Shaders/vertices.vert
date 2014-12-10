@@ -92,3 +92,5 @@ void main()
 	
 	vertIsTextured = in_isTextured;
 }
+
+

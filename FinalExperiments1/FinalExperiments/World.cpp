@@ -75,7 +75,7 @@ void World::initValues()
 	ground.scale(200);
 
 	water.init("Models/water.obj");
-	water.translate(TERR_WIDTH/2, -1, TERR_HEIGHT/2);
+	water.translate(50, -5, 50);
 	//water.scale(200);
 }
 
