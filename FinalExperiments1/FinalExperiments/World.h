@@ -21,6 +21,7 @@
 #include <iostream>
 #include <ctime>
 #include <stdlib.h>
+#include <vector>
 
 #include "LoadShaders.h"
 #include "vgl.h"
@@ -34,10 +35,11 @@
 #include "ShadowMap.h"
 #include "Terrain.h"
 #include "Ray.h"
+#include "Water.h"
+#include "TextureManager.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
-#define NUM_TEXTURES 3	// grass, rock, snow
 #define MAIN_CAM 0
 #define OVERHEAD 1
 
@@ -99,8 +101,7 @@ private:
 	//---------------------------------------
 	// Textures
 	//---------------------------------------
-	std::string textureFilenames[NUM_TEXTURES];
-	Texture* textures[NUM_TEXTURES];
+	TextureManager _texManager;
 	//---------------------------------------
 
 	//---------------------------------------
@@ -149,6 +150,7 @@ private:
 	// Terrain
 	//---------------------------------------
 	Terrain terrain;
+	Water water;
 	int target[2];
 	int moundY;
 	//---------------------------------------

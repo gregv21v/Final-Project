@@ -17,10 +17,7 @@ World::World() : moundY(1), activeTool(NONE)
 
 World::~World()
 {
-	for (int i = 0; i < NUM_TEXTURES; i++)
-	{
-		delete textures[i];
-	}
+	
 }
 
 void World::init(int in_width,int in_height)
@@ -76,6 +73,10 @@ void World::initValues()
 
 	ground.init("Models/mineCraftGround.obj");
 	ground.scale(200);
+
+	water.init("Models/water.obj");
+	water.translate(TERR_WIDTH/2, -1, TERR_HEIGHT/2);
+	//water.scale(200);
 }
 
 void World::initLights()
@@ -174,19 +175,12 @@ void World::setupTextures()
 {
 
 	// Texture Files
-	textureFilenames[0] = "Textures/Grass.png";
-	textureFilenames[1] = "Textures/Rock.png";
-	textureFilenames[2] = "Textures/Snow.png";
+	// TODO: These should be moved to a text files
+	_texManager.add("Textures/Grass.png", "Grass");
+	_texManager.add("Textures/Grass.png", "Rock");
+	_texManager.add("Textures/Snow.png", "Snow");
 
-	for (int i = 0; i < NUM_TEXTURES; i++)
-	{
-		textures[i] = new Texture();
-		textures[i]->loadFromFile(textureFilenames[i]);
-	}
-
-	textures[0]->load();
-	textures[1]->load();
-	textures[2]->load();
+	_texManager.loadAll();
 }
 
 void World::display()
@@ -251,9 +245,9 @@ void World::setUniforms()
 	glUniform1i(shader.getUniformLocation("LightingOn"), globalProperties.lighting_on);
 	glUniform1i(shader.getUniformLocation("ShadowsOn"), globalProperties.shadow_maps_on);
 	
-	textures[0]->activate(shader.getUniformLocation("tex[0]"), 0);
-	textures[1]->activate(shader.getUniformLocation("tex[1]"), 1);
-	textures[2]->activate(shader.getUniformLocation("tex[2]"), 2);
+	_texManager.get("Grass")->activate(shader.getUniformLocation("tex[0]"), 0);
+	_texManager.get("Rock")->activate(shader.getUniformLocation("tex[1]"), 1);
+	_texManager.get("Snow")->activate(shader.getUniformLocation("tex[2]"), 2);
 	terrain.setupUniforms(shader);
 
 	// setup lighting uniforms
@@ -286,6 +280,7 @@ void World::draw(Shader in_shader)
 	//cube.draw(in_shader);
 	//ground.draw(in_shader);
 	terrain.draw(in_shader);
+	water.draw(in_shader);
 }
 
 void World::keyPress(unsigned char key, int x, int y)
