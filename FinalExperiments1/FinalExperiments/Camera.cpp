@@ -53,7 +53,7 @@ void Camera::camLeft()
 	float temp_x = eyePosition.x - eye_move * sin(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z - eye_move * cos(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if (temp_x < MAX_MOVE && temp_z < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(eye_move, 0, 0));
 		view = translate * view;
@@ -66,7 +66,7 @@ void Camera::camRight()
 	float temp_x = eyePosition.x + eye_move * sin(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z + eye_move * cos(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if (temp_x < MAX_MOVE && temp_z < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(-eye_move, 0, 0));
 		view = translate * view;
