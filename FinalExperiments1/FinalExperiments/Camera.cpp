@@ -266,15 +266,15 @@ void Camera::setIsOrtho(bool in_ortho)
 vec4 Camera::convertToEyeSpace(vec4 point)
 {
 	if (is_ortho)
-		return glm::inverse(ortho * rotateMatrix) * point;
+		return glm::inverse(ortho) * point;
 	else
-		return glm::inverse(frustum * rotateMatrix) * point;
+		return glm::inverse(frustum) * point;
 }
 
 // from eye to world space
 vec4 Camera::convertToWorldSpace(vec4 point)
 {
-	return glm::inverse(view) * point;
+	return glm::inverse(rotateMatrix * view) * point;
 }
 
 vec4 Camera::unproject(vec4 point)
