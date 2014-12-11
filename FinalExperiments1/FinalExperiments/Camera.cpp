@@ -13,7 +13,7 @@ void Camera::camOut()
 	float temp_x = eyePosition.x + eye_move * cos(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z - eye_move * sin(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if ((temp_x) < MAX_MOVE && (temp_z) < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(0, 0, -eye_move));
 		view = translate * view;
@@ -26,7 +26,7 @@ void Camera::camIn()
 	float temp_x = eyePosition.x - eye_move * cos(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z + eye_move * sin(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if ((temp_x) < MAX_MOVE && (temp_z) < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(0, 0, eye_move));
 		view = translate * view;
@@ -126,7 +126,7 @@ void Camera::camLookDown()
 	mat4 rotate = glm::rotate(glm::mat4(), look_move, vec3((float)1, (float)0, (float)0));
 	rotateMatrix = rotate * rotateMatrix;
 	totalRotation.z += look_move;
-	updateEyeDirection(glm::inverse(rotate));
+	updateEyeDirection((rotate));
 }
 
 void Camera::setEyeMove(float move)

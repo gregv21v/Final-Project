@@ -19,6 +19,7 @@ void Ray::fromMouse(float x, float y, Camera * cam)
 	rayEye = cam->convertToEyeSpace(rayClip);
 	rayEye = vec4(glm::vec2(rayEye), -1.0f, 0.0f);
 	direction = vec3(cam->convertToWorldSpace(rayEye));
+	//direction = vec3(cam->unproject(vec4(x, y, -1.0f, 0.0f)));
 	direction = glm::normalize(direction);
 	origin = cam->getEyePosition();
 }
