@@ -1,4 +1,5 @@
 #version 330 core
+#pragma optionNV unroll all
 
 struct LightProperties{
 	bool isEnabled;
@@ -36,7 +37,7 @@ in vec2 vertTexCoord;
 in vec2 vertTexCoord_xy;
 in vec2 vertTexCoord_zy;
 in vec2 vertTexCoord_xz;
-in int vertIsTextured;
+flat in int vertIsTextured;
 
 uniform sampler2D modelTex;
 

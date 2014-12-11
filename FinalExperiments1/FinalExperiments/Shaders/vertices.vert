@@ -1,4 +1,5 @@
 #version 330 core
+#pragma optionNV unroll all
 
 
 const int maxLights = 3;		// *** Change this when adding lights ***
@@ -40,7 +41,7 @@ out vec2 vertTexCoord_zy;
 out vec2 vertTexCoord_xz;
 out vec4 vertPosition;
 out vec4 world_pos;
-out int vertIsTextured;
+flat out int vertIsTextured;
 
 void main()
 {
@@ -91,3 +92,5 @@ void main()
 	
 	vertIsTextured = in_isTextured;
 }
+
+

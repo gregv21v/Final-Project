@@ -1,6 +1,6 @@
 #include "World.h"
 
-World::World()
+World::World() : moundY(1), activeTool(NONE)
 {
 	srand(time(NULL));
 
@@ -17,10 +17,7 @@ World::World()
 
 World::~World()
 {
-	for (int i = 0; i < NUM_TEXTURES; i++)
-	{
-		delete textures[i];
-	}
+	
 }
 
 void World::init(int in_width,int in_height)
@@ -60,7 +57,7 @@ void World::init(int in_width,int in_height)
 
 	sky.init("Models/sky.obj");
 	sky.scale(500);
-	sky.setTexture(textures[3]);
+	sky.setTexture(_texManager.get("Sky"));
 }
 
 void World::initValues()
@@ -70,6 +67,10 @@ void World::initValues()
 
 	ground.init("Models/mineCraftGround.obj");
 	ground.scale(200);
+
+	water.init("Models/water.obj");
+	//water.translate(50, -5, 50);
+	//water.scale(200);
 }
 
 void World::initLights()
@@ -208,23 +209,13 @@ void World::updateRenderBufferSize()
 
 void World::setupTextures()
 {
+	// TODO: These should be moved to a text files
+	_texManager.add("Textures/Grass.png", "Grass");
+	_texManager.add("Textures/Grass.png", "Rock");
+	_texManager.add("Textures/Snow.png", "Snow");
+	_texManager.add("Textures/Sky.png", "Sky");
 
-	// Texture Files
-	textureFilenames[0] = "Textures/Grass.png";
-	textureFilenames[1] = "Textures/Rock.png";
-	textureFilenames[2] = "Textures/Snow.png";
-	textureFilenames[3] = "Textures/Sky.png";
-
-	for (int i = 0; i < NUM_TEXTURES; i++)
-	{
-		textures[i] = new Texture();
-		textures[i]->loadFromFile(textureFilenames[i]);
-	}
-
-	textures[0]->load();
-	textures[1]->load();
-	textures[2]->load();
-	textures[3]->load();
+	_texManager.loadAll();
 }
 
 void World::display()
@@ -312,9 +303,9 @@ void World::setUniforms()
 	glUniform1i(shader.getUniformLocation("LightingOn"), globalProperties.lighting_on);
 	glUniform1i(shader.getUniformLocation("ShadowsOn"), globalProperties.shadow_maps_on);
 	
-	textures[0]->activate(shader.getUniformLocation("tex[0]"), 0);
-	textures[1]->activate(shader.getUniformLocation("tex[1]"), 1);
-	textures[2]->activate(shader.getUniformLocation("tex[2]"), 2);
+	_texManager.get("Grass")->activate(shader.getUniformLocation("tex[0]"), 0);
+	_texManager.get("Rock")->activate(shader.getUniformLocation("tex[1]"), 1);
+	_texManager.get("Snow")->activate(shader.getUniformLocation("tex[2]"), 2);
 	terrain.setupUniforms(shader);
 
 	// setup lighting uniforms
@@ -363,6 +354,9 @@ void World::draw(Shader in_shader)
 	terrain.draw(in_shader);
 	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
 	//sky.draw(in_shader);
+
+	water.draw(in_shader);
+
 }
 
 void World::keyPress(unsigned char key, int x, int y)
@@ -508,24 +502,24 @@ void World::mouseFunc(int button, int state, float x, float y)
 		//-------------------------------------------------------
 		// Left Button ( Mod Terrain )
 		//-------------------------------------------------------
-	case 0:
+	case GLUT_LEFT_BUTTON:
+
 		// Mouse Picking
 		if (state == GLUT_DOWN)
 		{
-			ray.fromMouse(x, y, cams.at(MAIN_CAM));
-
-			if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+			ray.fromMouse(x, y, cams[current_camera]);
+			if (ray.isCollidingWithPlane(0, 300, 0, 300))
 			{
 				intersection = ray.getIntersection();
 				terrain.mound(intersection.x, intersection.z, moundY);
 			}
 			activeTool = MOUND;
 		}
-		else
+		else 
 		{
 			activeTool = NONE;
 		}
-
+			
 		break;
 		//-------------------------------------------------------
 		// Wheel Button ( Camera Panning )
@@ -539,7 +533,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 		//-------------------------------------------------------
 		// Right Button ( Camera Movement xz-plane )
 		//-------------------------------------------------------
-	case 2:
+	case GLUT_RIGHT_BUTTON:
 		if (state == GLUT_DOWN)
 			move_camera = true;				
 		else
@@ -615,17 +609,16 @@ void World::motionFunc(float x, float y)
 		mouse_prev_x = x;
 		mouse_prev_y = y;
 	}
-
 	// Mouse Picking
 	if (activeTool == MOUND)
 	{
 		Ray ray;
 		vec3 intersection;
-		ray.fromMouse(x, y, cams.at(MAIN_CAM));
-		if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+		ray.fromMouse(x, y, cams[current_camera]);
+		if (ray.isCollidingWithPlane(0, 300, 0, 300))
 		{
 			intersection = ray.getIntersection();
-			terrain.mound(intersection.x, intersection.z, moundY / 2.0f);
+			terrain.mound(intersection.x, intersection.z, moundY/2.0f);
 		}
 		activeTool = MOUND;
 	}

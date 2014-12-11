@@ -20,7 +20,7 @@
 #include "Shader.h"
 
 #define MAX_MOVE INFINITY
-#define PI 3.14159
+#define PI 3.14159265358979323846
 #define EYE_MOVE_DEFAULT .1	
 #define LOOK_MOVE_DEFAULT 2	// in degrees
 
@@ -79,12 +79,11 @@ public:
 	mat4 getFrustum();
 	void setFrustum(float, float, float, float, float, float);
 	void setOrtho(float, float, float, float, float, float);
-
-	void setIsOrtho(bool);
-
 	vec4 convertToEyeSpace(vec4 point);
 	vec4 convertToWorldSpace(vec4 point);
 	vec4 unproject(vec4 point);
+	void setIsOrtho(bool);
+
 
 private:
 

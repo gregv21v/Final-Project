@@ -13,7 +13,7 @@ void Camera::camOut()
 	float temp_x = eyePosition.x + eye_move * cos(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z - eye_move * sin(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if ((temp_x) < MAX_MOVE && (temp_z) < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(0, 0, -eye_move));
 		view = translate * view;
@@ -26,7 +26,7 @@ void Camera::camIn()
 	float temp_x = eyePosition.x - eye_move * cos(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z + eye_move * sin(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if ((temp_x) < MAX_MOVE && (temp_z) < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(0, 0, eye_move));
 		view = translate * view;
@@ -53,7 +53,7 @@ void Camera::camLeft()
 	float temp_x = eyePosition.x - eye_move * sin(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z - eye_move * cos(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if (temp_x < MAX_MOVE && temp_z < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(eye_move, 0, 0));
 		view = translate * view;
@@ -66,7 +66,7 @@ void Camera::camRight()
 	float temp_x = eyePosition.x + eye_move * sin(totalRotation.y * PI / 180.0);
 	float temp_z = eyePosition.z + eye_move * cos(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if (temp_x < MAX_MOVE && temp_z < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(-eye_move, 0, 0));
 		view = translate * view;
@@ -133,7 +133,7 @@ void Camera::camLookDown()
 	mat4 rotate = glm::rotate(glm::mat4(), look_move, vec3((float)1, (float)0, (float)0));
 	rotateMatrix = rotate * rotateMatrix;
 	totalRotation.z += look_move;
-	updateEyeDirection(glm::inverse(rotate));
+	updateEyeDirection((rotate));
 }
 
 void Camera::setEyeMove(float move)
@@ -283,15 +283,16 @@ void Camera::setIsOrtho(bool in_ortho)
 vec4 Camera::convertToEyeSpace(vec4 point)
 {
 	if (is_ortho)
-		return glm::inverse(ortho * rotateMatrix) * point;
+		return glm::inverse(ortho) * point;
 	else
-		return glm::inverse(frustum * rotateMatrix) * point;
+		return glm::inverse(frustum) * point;
+
 }
 
 // from eye to world space
 vec4 Camera::convertToWorldSpace(vec4 point)
 {
-	return glm::inverse(view) * point;
+	return glm::inverse(rotateMatrix * view) * point;
 }
 
 vec4 Camera::unproject(vec4 point)
@@ -300,5 +301,4 @@ vec4 Camera::unproject(vec4 point)
 		return glm::inverse(ortho * rotateMatrix * view) * point;
 	else
 		return glm::inverse(frustum * rotateMatrix * view) * point;
-
 }
