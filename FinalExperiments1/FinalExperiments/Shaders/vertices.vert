@@ -82,11 +82,11 @@ void main()
 
 	vertColor = in_color;
 
-	vertTexCoord = vec2((in_position.x / terrainProperties.width),(in_position.z / terrainProperties.height)) * terrainProperties.tileFactor;
+	vertTexCoord = in_texel;
 
 	vertTexCoord_xz = vec2((in_position.x / terrainProperties.width),(in_position.z / terrainProperties.height)) * terrainProperties.tileFactor;
-	vertTexCoord_xy = vec2((in_position.x / terrainProperties.width),(in_position.y / 50)) * terrainProperties.tileFactor;
-	vertTexCoord_zy = vec2((in_position.z / terrainProperties.height),(in_position.y /50)) * terrainProperties.tileFactor;
+	vertTexCoord_xy = vec2((in_position.x / terrainProperties.width),(in_position.y / 100)) * terrainProperties.tileFactor;
+	vertTexCoord_zy = vec2((in_position.z / terrainProperties.height),(in_position.y /100)) * terrainProperties.tileFactor;
 	//vertTexCoord = in_position.xz;
 	
 	vertIsTextured = in_isTextured;

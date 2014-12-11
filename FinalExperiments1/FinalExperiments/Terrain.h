@@ -13,8 +13,8 @@
 #include "Shader.h"
 #include "Color.h"
 
-#define TERR_WIDTH 100
-#define TERR_HEIGHT 100
+#define TERR_WIDTH 300
+#define TERR_HEIGHT 300
 
 using glm::vec3;
 

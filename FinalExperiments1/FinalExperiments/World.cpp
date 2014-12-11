@@ -32,18 +32,8 @@ void World::init(int in_width,int in_height)
 
 	initLights();
 
-	
-
 	// initialize cameras
-	Camera* temp1 = new Camera();
-	temp1->init(50, 20, 50);
-	//temp1->setIsOrtho(true);
-	cams.push_back(temp1);
-	//Camera* temp2 = new Camera();
-	//temp2->init(0, 10, 20);
-	//cams.push_back(temp2);
-
-	initOverheadCam();
+	initCameras();
 
 	// initialize shaders
 	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag");
@@ -67,6 +57,10 @@ void World::init(int in_width,int in_height)
 	glClearColor(0, 0, 0, 0);
 
 	setupTerrain();
+
+	sky.init("Models/sky.obj");
+	sky.scale(500);
+	sky.setTexture(textures[3]);
 }
 
 void World::initValues()
@@ -92,7 +86,7 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setIsSpot(false);
 	lights.at(DIRECTIONAL_1)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
 	lights.at(DIRECTIONAL_1)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
-	lights.at(DIRECTIONAL_1)->setPosition(vec3(100, 100, -100));
+	lights.at(DIRECTIONAL_1)->setPosition(vec3(1000, 1000, -1000));
 	lights.at(DIRECTIONAL_1)->setHalfVector(vec3(0, 0, 0));
 	lights.at(DIRECTIONAL_1)->setConeDirection(vec3(0, 0, -1));
 	lights.at(DIRECTIONAL_1)->setSpotCosCutoff(.9);
@@ -120,7 +114,7 @@ void World::initLights()
 	lights.at(DIRECTIONAL_2)->setIsEnabled(true);
 	lights.at(DIRECTIONAL_2)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
 	lights.at(DIRECTIONAL_2)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
-	lights.at(DIRECTIONAL_2)->setPosition(vec3(-100, 100, 100));
+	lights.at(DIRECTIONAL_2)->setPosition(vec3(-1000, 1000, 1000));
 	lights.at(DIRECTIONAL_2)->setIsShadowMapEnabled(false);
 
 	lightColor.red = 1;
@@ -140,10 +134,29 @@ void World::initLights()
 	lights.at(DIRECTIONAL_3)->setIsEnabled(true);
 	lights.at(DIRECTIONAL_3)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
 	lights.at(DIRECTIONAL_3)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
-	lights.at(DIRECTIONAL_3)->setPosition(vec3(100, 100, 100));
+	lights.at(DIRECTIONAL_3)->setPosition(vec3(1000, 1000, 1000));
 	lights.at(DIRECTIONAL_3)->setIsShadowMapEnabled(false);
 
 	ambientLight = vec3(.5, .5, .5);
+}
+
+void World::initCameras()
+{
+	glGenFramebuffers(NUM_FBS, FBs);
+	glGenRenderbuffers(NUM_RBS, RBs);
+
+	updateRenderBufferSize();
+
+	initMainCam();
+	initOverheadCam();
+}
+
+void World::initMainCam()
+{
+	Camera* temp1 = new Camera();
+	cams.push_back(temp1);
+
+	cams.at(MAIN_CAM)->init(terrain.getWidth() / 2, 20, terrain.getHeight() / 2);	
 }
 
 void World::initOverheadCam()
@@ -153,18 +166,41 @@ void World::initOverheadCam()
 
 	cams.at(OVERHEAD)->init(0,0,0);
 	cams.at(OVERHEAD)->setIsOrtho(true);
-	cams.at(OVERHEAD)->setView(glm::lookAt(vec3(50, 50, 50), vec3(50, 0, 50), vec3(0, 1, 0)));
+	cams.at(OVERHEAD)->setOrtho(-.5 * terrain.getWidth(), .5 * terrain.getWidth() - 1, -.5 * terrain.getHeight(), .5 * terrain.getHeight() - 1, 0, 10000);
+	cams.at(OVERHEAD)->setView(
+		
+		glm::rotate(glm::mat4(), 90.0f, vec3(1, 0, 0)) *
+		glm::rotate(glm::mat4(), 180.0f, vec3(0, 1, 0)) *
+		glm::translate(glm::mat4(), vec3(-.5 * terrain.getWidth(), -10, -.5 * terrain.getHeight())));
+}
 
-	glGenFramebuffers(NUM_FBS, FBs);
-	glGenRenderbuffers(NUM_RBS, RBs);
+void World::updateRenderBufferSize()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, FBs[MAIN_CAM_FB]);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[MAIN_CAM_COLOR_RB]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, window_width, window_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		GL_RENDERBUFFER, RBs[MAIN_CAM_COLOR_RB]);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[MAIN_CAM_DEPTH_RB]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, window_width, window_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, RBs[MAIN_CAM_DEPTH_RB]);
+
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBs[OH_CAM_FB]);
-	glBindRenderbuffer(GL_RENDERBUFFER, RBs[OH_CAM_RB]);
 
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[OH_CAM_COLOR_RB]);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, window_width, window_height);
-
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		GL_RENDERBUFFER, RBs[OH_CAM_RB]);
+		GL_RENDERBUFFER, RBs[OH_CAM_COLOR_RB]);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[OH_CAM_DEPTH_RB]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, window_width, window_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, RBs[OH_CAM_DEPTH_RB]);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -177,6 +213,7 @@ void World::setupTextures()
 	textureFilenames[0] = "Textures/Grass.png";
 	textureFilenames[1] = "Textures/Rock.png";
 	textureFilenames[2] = "Textures/Snow.png";
+	textureFilenames[3] = "Textures/Sky.png";
 
 	for (int i = 0; i < NUM_TEXTURES; i++)
 	{
@@ -187,6 +224,7 @@ void World::setupTextures()
 	textures[0]->load();
 	textures[1]->load();
 	textures[2]->load();
+	textures[3]->load();
 }
 
 void World::display()
@@ -194,21 +232,47 @@ void World::display()
 	// clear color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	// if shadow maps enabled, render shadow maps
 	if (globalProperties.shadow_maps_on)
 		renderShadowMaps();
 
-	// use main shader
+	// use main shader and render cameras
 	shader.use();
-
-	renderOverhead();
-
-	current_camera = MAIN_CAM;
-	setUniforms();
-	draw(shader);
-
+	renderOverheadCamera();
+	renderMainCamera();
 	shader.unuse();
 
+	// combine the framebuffers
+	assembleFramebuffers();
 
+	// swap the buffers at the end of the display sequence
+	glutSwapBuffers();
+
+}
+
+void World::assembleFramebuffers()
+{
+	int minimum_value = window_width / 40;
+
+	if (window_height / 40 < minimum_value)
+	{
+		minimum_value = window_height / 40;
+	}
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBs[MAIN_CAM_FB]);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(
+		0,
+		0,
+		window_width,
+		window_height,
+		0,
+		0,
+		window_width,
+		window_height,
+		GL_COLOR_BUFFER_BIT,
+		GL_LINEAR);
+	
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBs[OH_CAM_FB]);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glBlitFramebuffer(
@@ -216,15 +280,12 @@ void World::display()
 		0,
 		window_width,
 		window_height,
-		map(-.975, -1.0, 1.0, 0, window_width),
-		map(.5, -1.0, 1.0, 0, window_height),
-		map(-.5, -1.0, 1.0, 0, window_width),
-		map(.975, -1.0, 1.0, 0, window_height),
-		GL_COLOR_BUFFER_BIT, 
-		GL_NEAREST);
-
-	// swap the buffers at the end of the display sequence
-	glutSwapBuffers();
+		minimum_value * 9,
+		window_height - minimum_value,
+		minimum_value,
+		window_height - minimum_value * 9,
+		GL_COLOR_BUFFER_BIT,
+		GL_LINEAR);
 }
 
 void World::renderShadowMaps()
@@ -266,26 +327,42 @@ void World::setUniforms()
 	cams.at(current_camera)->setUniforms(shader);
 }
 
-void World::renderOverhead()
+void World::renderMainCamera()
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBs[OH_CAM_FB]);
-	glBindRenderbuffer(GL_RENDERBUFFER, RBs[OH_CAM_FB]);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBs[MAIN_CAM_FB]);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	current_camera = MAIN_CAM;
+
+	setUniforms();
+	draw(shader);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void World::renderOverheadCamera()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, FBs[OH_CAM_FB]);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	current_camera = OVERHEAD;
 
 	setUniforms();
 	draw(shader);
 
-	// Unbind the GUI frame buffer and render buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void World::draw(Shader in_shader)
 {
-	//cube.draw(in_shader);
-	//ground.draw(in_shader);
+	//water.draw(in_shader);
+	
+	glUniform1i(in_shader.getUniformLocation("IsTerrain"), 1);
 	terrain.draw(in_shader);
+	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
+	//sky.draw(in_shader);
 }
 
 void World::keyPress(unsigned char key, int x, int y)
@@ -296,10 +373,12 @@ void World::keyPress(unsigned char key, int x, int y)
 	// Terrain Manipulation
 	//--------------------------------------------------------------------------------------
 	case 'z':
-		terrain.mound(target[0], target[1], 1);
+		//terrain.mound(target[0], target[1], 1);
+		moundY = 1;
 		break;
 	case 'x':
-		terrain.mound(target[0], target[1], -1);
+		//terrain.mound(target[0], target[1], -1);
+		moundY = -1;
 		break;
 	case 'u':
 		target[1] ++;
@@ -327,7 +406,7 @@ void World::keyPress(unsigned char key, int x, int y)
 		break;
 	//--------------------------------------------------------------------------------------
 	case 'c':
-		current_camera = (current_camera + 1) % cams.size();
+		//current_camera = (current_camera + 1) % cams.size();
 		break;
 	//--------------------------------------------------------------------------------------
 	// Individual Light Toggle
@@ -380,6 +459,12 @@ void World::keyPress(unsigned char key, int x, int y)
 		win_full_prev_height = window_height;
 		glutFullScreen();
 	//--------------------------------------------------------------------------------------
+	// Save
+	//--------------------------------------------------------------------------------------
+	case 'p':
+		readPixelColor(x,y);
+		break;
+	//--------------------------------------------------------------------------------------
 	default:
 		break;
 	}
@@ -415,12 +500,32 @@ void World::idleFunc()
 
 void World::mouseFunc(int button, int state, float x, float y)
 {
+	Ray ray;
+	vec3 intersection;
+
 	switch (button)
 	{
 		//-------------------------------------------------------
 		// Left Button ( Mod Terrain )
 		//-------------------------------------------------------
 	case 0:
+		// Mouse Picking
+		if (state == GLUT_DOWN)
+		{
+			ray.fromMouse(x, y, cams.at(MAIN_CAM));
+
+			if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+			{
+				intersection = ray.getIntersection();
+				terrain.mound(intersection.x, intersection.z, moundY);
+			}
+			activeTool = MOUND;
+		}
+		else
+		{
+			activeTool = NONE;
+		}
+
 		break;
 		//-------------------------------------------------------
 		// Wheel Button ( Camera Panning )
@@ -511,6 +616,20 @@ void World::motionFunc(float x, float y)
 		mouse_prev_y = y;
 	}
 
+	// Mouse Picking
+	if (activeTool == MOUND)
+	{
+		Ray ray;
+		vec3 intersection;
+		ray.fromMouse(x, y, cams.at(MAIN_CAM));
+		if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+		{
+			intersection = ray.getIntersection();
+			terrain.mound(intersection.x, intersection.z, moundY / 2.0f);
+		}
+		activeTool = MOUND;
+	}
+
 	//cout << "( " << cam.getEyePosition().x << " , " << cam.getEyePosition().y << " , " << cam.getEyePosition().z << " )\n";
 
 	glutPostRedisplay();
@@ -527,10 +646,14 @@ void World::reshapeFunc(int w, int h)
 	window_width = w;
 	window_height = h;
 
-	cams.at(current_camera)->setFrustum(-.30, .30,
-		map(0, 0, w, -.30, .30),
-		map(h, 0, w, -.30, .30),
-		.3, 10000);
+	cams.at(MAIN_CAM)->setFrustum(-1.0, 1.0,
+		map(0, 0, w, -1.0, 1.0),
+		map(h, 0, w, -1.0, 1.0),
+		1.0, 10000);
+
+	updateRenderBufferSize();
+
+	glutPostRedisplay();
 }
 
 void World::setupTerrain()
@@ -544,4 +667,56 @@ void World::setupTerrain()
 	terrain.setSize(15);
 
 	terrain.setIsTextured(true);
+
+	//water.init(terrain.getWidth() / 2, terrain.getHeight() / 2);
+}
+
+void World::saveImage()
+{
+	/*
+	GLubyte image[MAX_IMAGE_WIDTH][MAX_IMAGE_HEIGHT];
+
+	glReadPixels(0, 0, window_width, window_height, GL_RGB, GL_UNSIGNED_BYTE, &image);
+
+	vector<unsigned char> png;
+
+	for (int i = 0; i < MAX_IMAGE_WIDTH; i++)
+	{
+		for (int j = 0; j < MAX_IMAGE_HEIGHT; j++)
+		{
+			png.push_back(image[i][j]);
+			cout << "transfer\n";
+		}
+	}
+
+	cout << "Encode\n";
+	lodepng::encode("testOut.png", png, window_width, window_height);
+
+	*/
+
+}
+
+void World::readPixelColor(int x, int y)
+{
+	GLubyte colors[3];
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glReadPixels(x, window_height - y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, colors);
+
+	int temp[3];
+
+	temp[0] = colors[0];
+	temp[1] = colors[1];
+	temp[2] = colors[2];
+
+	cout << "R: " << temp[0] << endl;
+	cout << "G: " << temp[1] << endl;
+	cout << "B: " << temp[2] << endl;
+
+	vec4 position = vec4(
+		map(x, 0, window_width, -1.0, 1.0),
+		map(y, 0, window_width, -1.0, 1.0), 
+		0, 1.0) * glm::inverse(cams.at(MAIN_CAM)->getFrustum());
+
+	cout << "( " << position.x << " , " << position.y << " , " << position.z << " )\n";
 }

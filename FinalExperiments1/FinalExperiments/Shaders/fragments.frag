@@ -38,9 +38,9 @@ in vec2 vertTexCoord_zy;
 in vec2 vertTexCoord_xz;
 in int vertIsTextured;
 
-//uniform sampler2D GrassTex;
-//uniform sampler2D RockTex;
-//uniform sampler2D SnowTex;
+uniform sampler2D modelTex;
+
+uniform int IsTerrain;
 
 uniform float Shininess;
 uniform float Strength;
@@ -124,9 +124,9 @@ void main()
 
 	net_shadow = net_shadow / numShadowsEnabled;
 
-	float grass_factor = 0;
-	float rock_factor = 0;
-	float snow_factor = 0;
+	float grass_factor = 1;
+	float rock_factor = 1;
+	float snow_factor = 1;
 	
 	// figure out height based texturing
 	if(world_pos.y >= 40)
@@ -197,20 +197,6 @@ void main()
 											rock_factor * texture(tex[1],vertTexCoord_zy).a +
 											snow_factor * texture(tex[2],vertTexCoord_zy).a));
 
-	/*
-	net_texture = (
-		abs(dot(vertNormal,vec3(0,1,0))) * texture(tex[currTex],vertTexCoord_xz).rgb + 
-		abs(dot(vertNormal,vec3(0,0,1))) * texture(tex[currTex],vertTexCoord_xy).rgb + 
-		abs(dot(vertNormal,vec3(1,0,0))) * texture(tex[currTex],vertTexCoord_zy).rgb);
-	//net_texture = net_texture / 3;
-	net_alpha = (
-		abs(dot(vertNormal,vec3(0,1,0))) * texture(tex[currTex],vertTexCoord_xz).a + 
-		abs(dot(vertNormal,vec3(0,0,1))) * texture(tex[currTex],vertTexCoord_xy).a + 
-		abs(dot(vertNormal,vec3(1,0,0))) * texture(tex[currTex],vertTexCoord_zy).a);
-	//net_alpha = net_alpha / 3;
-	
-	*/
-
 	net_alpha = 1;
 
 	if(LightingOn) 
@@ -234,9 +220,17 @@ void main()
 			{
 				//vec3 rgb = min(min(Ambient * texture(tex[currTex],vertTexCoord).rgb,texture(tex[currTex], vertTexCoord).rgb * scatteredLight + reflectedLight), vec3(1.0));
 				//fragColor = vec4(rgb, texture(tex[currTex], vertTexCoord).a);
-
-				vec3 rgb = min(max(Ambient * net_texture, net_texture * scatteredLight + reflectedLight), vec3(1.0));
-				fragColor = vec4(rgb, net_alpha);
+				if(IsTerrain == 1)
+				{
+					vec3 rgb = min(max(Ambient * net_texture, net_texture * scatteredLight + reflectedLight), vec3(1.0));
+					fragColor = vec4(rgb, net_alpha);
+					//fragColor = vec4(1,0,1,1);
+				}
+				else
+				{
+					vec3 rgb = min(texture(modelTex,vertTexCoord).rgb, vec3(1.0));
+					fragColor = vec4(rgb, texture(modelTex, vertTexCoord).a);
+				}
 			}
 			else 
 			{

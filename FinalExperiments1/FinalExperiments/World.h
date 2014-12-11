@@ -23,6 +23,7 @@
 #include <stdlib.h>
 
 #include "LoadShaders.h"
+#include "lodepng.h"
 #include "vgl.h"
 #include "vmath.h"
 #include "Object.h"
@@ -33,12 +34,19 @@
 #include "Camera.h"
 #include "ShadowMap.h"
 #include "Terrain.h"
+#include "Ray.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
-#define NUM_TEXTURES 3	// grass, rock, snow
+#define NUM_TEXTURES 4	// grass, rock, snow
 #define MAIN_CAM 0
 #define OVERHEAD 1
+
+#define MAX_IMAGE_WIDTH 1920
+#define MAX_IMAGE_HEIGHT 1080
+
+#define OH_RB_WIDTH 1000
+#define OH_RB_HEIGHT 1000
 
 using glm::mat4;
 
@@ -63,11 +71,15 @@ public:
 	void reshapeFunc(int, int);
 	//--------------------------------------------
 
-	void renderOverhead();
+	void renderMainCamera();
+	void renderOverheadCamera();
 	void draw(Shader);
+	void assembleFramebuffers();
 	void initValues();				// initializes values
 	void initLights();				// initializes lights ( edit values in this function )
+	void initCameras();
 	void initOverheadCam();
+	void initMainCam();
 	void setupTextures();
 	void renderShadowMaps();
 	void setUniforms();
@@ -75,6 +87,12 @@ public:
 	void setupTerrain();
 
 	void idleFunc();
+
+	void saveImage();
+
+	void readPixelColor(int, int);
+
+	void updateRenderBufferSize();
 
 private:
 
@@ -147,16 +165,24 @@ private:
 	// Terrain
 	//---------------------------------------
 	Terrain terrain;
+	//Water water;
 	int target[2];
+	int moundY;
 	//---------------------------------------
+
+	enum Tool { MOUND, NONE };
+
+	Tool activeTool;
 
 	//---------------------------------------
 	// Overhead Camera Framebuffer / Renderbuffer
 	//---------------------------------------
-	enum{ OH_CAM_FB, NUM_FBS };
+	enum{ MAIN_CAM_FB, OH_CAM_FB, NUM_FBS };
 	GLuint FBs[NUM_FBS];
-	enum{ OH_CAM_RB, NUM_RBS };
+	enum{ MAIN_CAM_COLOR_RB, MAIN_CAM_DEPTH_RB, OH_CAM_COLOR_RB, OH_CAM_DEPTH_RB, NUM_RBS };
 	GLuint RBs[NUM_RBS];
 	//---------------------------------------
+	
+	Model sky;
 };
 

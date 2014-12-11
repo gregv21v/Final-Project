@@ -31,9 +31,11 @@ void Terrain::draw(Shader in_shader)
 		{
 			// Solid:
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * 6 * ((i*(TERR_WIDTH - 1)) + j)));
+			//glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * 12 * ((i*(TERR_WIDTH - 1)) + j)));
 
 			// Mesh:
 			//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * 6 * ((i*(TERR_WIDTH - 1)) + j)));
+			//glDrawElements(GL_LINE_LOOP, 12, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * 12 * ((i*(TERR_WIDTH - 1)) + j)));
 		}
 	}
 
@@ -92,18 +94,32 @@ void Terrain::init()
 	{
 		for (int j = 0; j < TERR_HEIGHT - 1; j++)
 		{
-			/*
-			GLuint temp[4] = { 0, (TERR_WIDTH - 1) * (TERR_HEIGHT - 1) - (TERR_HEIGHT - 1), (TERR_WIDTH - 1) * (TERR_HEIGHT - 1), TERR_WIDTH - 1,
-			};*/
-
+			
 			GLuint temp[6] = {
 				(i * TERR_WIDTH) + j,
-				(i * TERR_WIDTH) + j + 1,
 				((i + 1) * TERR_WIDTH) + j + 1,
+				(i * TERR_WIDTH) + j + 1,
+				(i * TERR_WIDTH) + j,
+				((i + 1) * TERR_WIDTH) + j,
+				((i + 1) * TERR_WIDTH) + j + 1
+			};
+			
+				/*
+			GLuint temp[12] = {
 				(i * TERR_WIDTH) + j,
 				((i + 1) * TERR_WIDTH) + j + 1,
-				((i + 1) * TERR_WIDTH) + j
-			};
+				(i * TERR_WIDTH) + j + 1,
+				(i * TERR_WIDTH) + j,
+				((i + 1) * TERR_WIDTH) + j,
+				((i + 1) * TERR_WIDTH) + j + 1,
+
+				((i + 1) * TERR_WIDTH) + j,
+				((i + 1) * TERR_WIDTH) + j + 1,
+				(i * TERR_WIDTH) + j + 1,
+				((i + 1) * TERR_WIDTH) + j,
+				(i * TERR_WIDTH) + j + 1,
+				(i * TERR_WIDTH) + j
+			};*/
 
 			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,processed * sizeof(temp),sizeof(temp),temp);
 

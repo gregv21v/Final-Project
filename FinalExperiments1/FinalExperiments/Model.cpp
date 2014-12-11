@@ -552,7 +552,7 @@ void Model::setTexture(Texture* inTexture)
 void Model::activateTextures(Shader shader)
 {
 	if (texture != nullptr)
-		texture->activate(shader.getUniformLocation("tex"),0);
+		texture->activate(shader.getUniformLocation("modelTex"),10);
 }
 
 void Model::deactivateTextures()

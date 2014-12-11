@@ -1,20 +1,8 @@
-﻿Build started 12/7/2014 8:18:53 PM.
+﻿Build started 12/11/2014 4:52:55 PM.
      1>Project "D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\FinalExperiments\FinalExperiments.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt World.cpp
-         World.cpp
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.h(161): warning C4091: 'static ' : ignored on left of 'World' when no variable is declared
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(5): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(98): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(100): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(101): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(102): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(224): warning C4244: 'argument' : conversion from 'double' to 'GLint', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(233): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(249): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(260): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(533): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(533): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Ray.cpp
+         Ray.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.exe" /INCREMENTAL /NOLOGO freeglut.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.lib" /MACHINE:X86 Debug\Camera.obj
          Debug\Light.obj
@@ -23,14 +11,16 @@
          Debug\main.obj
          Debug\Model.obj
          Debug\Object.obj
+         Debug\Ray.obj
          Debug\Shader.obj
          Debug\ShadowMap.obj
          Debug\Terrain.obj
          Debug\Texture.obj
+         Debug\TextureManager.obj
          Debug\World.obj
          FinalExperiments.vcxproj -> D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.exe
      1>Done Building Project "D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\FinalExperiments\FinalExperiments.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.73
+Time Elapsed 00:00:01.57

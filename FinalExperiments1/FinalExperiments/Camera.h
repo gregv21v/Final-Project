@@ -76,10 +76,15 @@ public:
 
 	mat4 getView();
 	void setView(mat4);
-
+	mat4 getFrustum();
 	void setFrustum(float, float, float, float, float, float);
+	void setOrtho(float, float, float, float, float, float);
 
 	void setIsOrtho(bool);
+
+	vec4 convertToEyeSpace(vec4 point);
+	vec4 convertToWorldSpace(vec4 point);
+	vec4 unproject(vec4 point);
 
 private:
 

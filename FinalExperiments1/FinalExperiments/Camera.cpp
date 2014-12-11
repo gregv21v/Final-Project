@@ -80,9 +80,14 @@ void Camera::zoomIn()
 	float temp_z = eye_move * sin(totalRotation.z * PI / 180.0) * sin(totalRotation.y * PI / 180.0);
 	float temp_y = eye_move * cos(totalRotation.z * PI / 180.0);
 
-	mat4 translate = glm::translate(glm::mat4(), vec3(0, -temp_y, temp_z));
+	float move_z = eye_move * sin(totalRotation.z * PI / 180.0);
+
+	mat4 translate = glm::translate(glm::mat4(), vec3(0, -temp_y, move_z));
 	view = translate * view;
 	eyePosition = vec3(eyePosition.x - temp_x, eyePosition.y + temp_y, eyePosition.z - temp_z);
+
+	cout << "( " << temp_x << " , " << temp_y << " , " << temp_z << " )\n";
+	cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
 }
 
 void Camera::zoomOut()
@@ -91,11 +96,15 @@ void Camera::zoomOut()
 	float temp_z = eye_move * sin(totalRotation.z * PI / 180.0) * sin(totalRotation.y * PI / 180.0);
 	float temp_y = eye_move * cos(totalRotation.z * PI / 180.0);
 
-	mat4 translate = glm::translate(glm::mat4(), vec3(0,temp_y,-temp_z));
+	float move_z = eye_move * sin(totalRotation.z * PI / 180.0);
+
+	mat4 translate = glm::translate(glm::mat4(), vec3(0,temp_y,-move_z));
 	view = translate * view;
 	eyePosition = vec3(eyePosition.x + temp_x, eyePosition.y - temp_y, eyePosition.z + temp_z);
-}
 
+	cout << "( " << temp_x << " , " << temp_y << " , " << temp_z << " )\n";
+	cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
+}
 
 // rotate the view
 void Camera::camLookLeft()
@@ -112,7 +121,6 @@ void Camera::camLookRight()
 	totalRotation.y += look_move;
 	updateEyeDirection(glm::inverse(rotate));
 }
-
 void Camera::camLookUp()
 {
 	mat4 rotate = glm::rotate(glm::mat4(), -look_move, vec3((float)1, (float)0, (float)0));
@@ -120,7 +128,6 @@ void Camera::camLookUp()
 	totalRotation.z += -look_move;
 	updateEyeDirection(glm::inverse(rotate));
 }
-
 void Camera::camLookDown()
 {
 	mat4 rotate = glm::rotate(glm::mat4(), look_move, vec3((float)1, (float)0, (float)0));
@@ -167,8 +174,8 @@ void Camera::init(float x, float y, float z)
 	rotateMatrix = glm::mat4();
 	view = translate;
 
-	frustum = glm::frustum((float)-1.0, (float)1.0, (float)-1.0, (float)1.0, (float)0.3, (float)10000);
-	ortho = glm::ortho((float)-1.0, (float)1.0, (float)-1.0, (float)1.0, (float)0.3, (float)10000);
+	frustum = glm::frustum((float)-1.0, (float)1.0, (float)-1.0, (float)1.0, (float)1.0, (float)10000);
+	ortho = glm::ortho((float)-1.0, (float)1.0, (float)-1.0, (float)1.0, (float)0.0, (float)1000);
 
 	is_ortho = false;
 }
@@ -251,12 +258,47 @@ void Camera::setView(mat4 inView)
 	view = inView;
 }
 
+mat4 Camera::getFrustum()
+{
+	return frustum;
+}
+
 void Camera::setFrustum(float in_left, float in_right, float in_bottom, float in_top, float in_near, float in_far)
 {
 	frustum = glm::frustum(in_left, in_right, in_bottom, in_top, in_near, in_far);
 }
 
+void Camera::setOrtho(float in_left, float in_right, float in_bottom, float in_top, float in_near, float in_far)
+{
+	ortho = glm::ortho(in_left, in_right, in_bottom, in_top, in_near, in_far);
+}
+
 void Camera::setIsOrtho(bool in_ortho)
 {
 	is_ortho = in_ortho;
+}
+
+// from normalized device coordinates to eye space
+// Mouse Picking
+vec4 Camera::convertToEyeSpace(vec4 point)
+{
+	if (is_ortho)
+		return glm::inverse(ortho * rotateMatrix) * point;
+	else
+		return glm::inverse(frustum * rotateMatrix) * point;
+}
+
+// from eye to world space
+vec4 Camera::convertToWorldSpace(vec4 point)
+{
+	return glm::inverse(view) * point;
+}
+
+vec4 Camera::unproject(vec4 point)
+{
+	if (is_ortho)
+		return glm::inverse(ortho * rotateMatrix * view) * point;
+	else
+		return glm::inverse(frustum * rotateMatrix * view) * point;
+
 }
