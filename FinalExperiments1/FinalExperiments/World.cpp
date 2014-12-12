@@ -57,8 +57,12 @@ void World::init(int in_width,int in_height)
 	setupTerrain();
 
 	sky.init("Models/sky.obj");
-	sky.scale(500);
+	sky.scale(300);
+	sky.translate(terrain.getWidth() / 2, 149, terrain.getHeight() / 2);
+	sky.rotate(180, vec3(0, 1, 0));
 	sky.setTexture(_texManager.get("Sky"));
+
+	activeTool = NONE;
 }
 
 void World::initValues()
@@ -333,7 +337,10 @@ void World::draw(Shader in_shader)
 {
 
 	
-	glUniform1i(in_shader.getUniformLocation("IsTerrain"), 1);
+
+	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
+	//sky.draw(in_shader);
+	glUniform1i(in_shader.getUniformLocation("IsTerrain"), true);
 	terrain.draw(in_shader);
 
 	glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
