@@ -56,9 +56,9 @@ void Model::scale(float scaleFactor)
 {
 	isTransformed = 1;
 	// Translate to center
-	mat4 translate1 = glm::translate(mat4(),vec3(0 - center.x, 0 - center.y, 0 - center.z));
+	mat4 translate1 = glm::translate(mat4(),vec3(-center));
 	mat4 scale = glm::scale(mat4(), vec3(scaleFactor, scaleFactor, scaleFactor));
-	mat4 translate2 = glm::translate(mat4(), vec3(center.x,center.y,center.z));
+	mat4 translate2 = glm::translate(mat4(), vec3(center));
 
 	transform = (translate2 * scale * translate1) * transform;
 	
@@ -69,7 +69,7 @@ void Model::scale(float scaleFactor)
 void Model::translate(float x, float y, float z)
 {
 	isTransformed = 1;
-	mat4 translate = glm::translate(mat4(),vec3(x, y, z));
+	mat4 translate = glm::translate(mat4(), vec3(x, y, z));
 	transform = translate * transform;
 
 	updateCenter();
@@ -80,9 +80,9 @@ void Model::rotate(float angle, vec3 inAxis)
 {
 	isTransformed = 1;
 	// Translate to center
-	mat4 translate1 = glm::translate(mat4(), vec3(0 - center.x, 0 - center.y, 0 - center.z));
+	mat4 translate1 = glm::translate(mat4(), vec3(-center));
 	mat4 rotate = glm::rotate(mat4(), angle, inAxis);
-	mat4 translate2 = glm::translate(mat4(), vec3(center.x, center.y, center.z));
+	mat4 translate2 = glm::translate(mat4(), vec3(center));
 
 	transform = (translate2 * rotate * translate1) * transform;
 	updateCenter();

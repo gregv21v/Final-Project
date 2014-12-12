@@ -8,6 +8,7 @@ Ray::Ray()
 
 Ray::~Ray()
 {
+
 }
 
 

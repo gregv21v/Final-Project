@@ -70,7 +70,7 @@ void World::initValues()
 	ground.scale(200);
 
 	water.init("Models/water.obj");
-	water.translate(4, 4, 4);
+	water.translate(4, 10, 4);
 	water.scale(200);
 }
 

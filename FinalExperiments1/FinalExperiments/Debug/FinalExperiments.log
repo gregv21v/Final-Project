@@ -1,12 +1,24 @@
-﻿Build started 12/11/2014 7:11:35 PM.
+﻿Build started 12/12/2014 2:37:47 PM.
      1>Project "C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\FinalExperiments\FinalExperiments.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Terrain.cpp
-         Terrain.cpp
-     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(77): warning C4244: 'initializing' : conversion from 'int' to 'GLfloat', possible loss of data
-     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(199): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(241): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(387): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt World.cpp
+         World.cpp
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.h(190): warning C4091: 'static ' : ignored on left of 'World' when no variable is declared
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(5): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(94): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(96): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(97): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(98): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(143): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(153): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(268): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(284): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(295): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(500): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(500): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(607): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(631): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
        Link:
          C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.exe" /INCREMENTAL /NOLOGO freeglut.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.lib" /MACHINE:X86 Debug\Camera.obj
          Debug\Light.obj
@@ -28,4 +40,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.95
+Time Elapsed 00:00:07.01
