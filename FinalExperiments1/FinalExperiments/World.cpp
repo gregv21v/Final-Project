@@ -69,9 +69,9 @@ void World::initValues()
 	ground.init("Models/mineCraftGround.obj");
 	ground.scale(200);
 
-	water.init("Models/water.obj");
-	water.translate(4, 10, 4);
-	water.scale(200);
+	//water.init("Models/water.obj");
+	//water.translate(4, -100, 4);
+	//water.scale(200);
 }
 
 void World::initLights()
