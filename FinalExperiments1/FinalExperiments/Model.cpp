@@ -1,8 +1,9 @@
 #include "Model.h"
 
 
-Model::Model()
+Model::Model() : isTransformed(0)
 {
+
 	
 }
 
@@ -38,7 +39,7 @@ void Model::draw(Shader shader)
 	glVertexAttrib4fv(vModelMatrix1, &transform[1][0]);
 	glVertexAttrib4fv(vModelMatrix2, &transform[2][0]);
 	glVertexAttrib4fv(vModelMatrix3, &transform[3][0]);
-	glVertexAttrib4fv(vColor, &color.red);
+	glVertexAttrib4fv(vColor, glm::value_ptr(color));
 	glVertexAttrib4fv(vNormalMatrix0, &nTransform[0][0]);
 	glVertexAttrib4fv(vNormalMatrix1, &nTransform[1][0]);
 	glVertexAttrib4fv(vNormalMatrix2, &nTransform[2][0]);
@@ -53,18 +54,21 @@ void Model::draw(Shader shader)
 // Transformation Stuff
 void Model::scale(float scaleFactor)
 {
+	isTransformed = 1;
 	// Translate to center
 	mat4 translate1 = glm::translate(mat4(),vec3(0 - center.x, 0 - center.y, 0 - center.z));
 	mat4 scale = glm::scale(mat4(), vec3(scaleFactor, scaleFactor, scaleFactor));
 	mat4 translate2 = glm::translate(mat4(), vec3(center.x,center.y,center.z));
 
 	transform = (translate2 * scale * translate1) * transform;
+	
 	updateCenter();
 	//updateNormalMat();
 }
 
 void Model::translate(float x, float y, float z)
 {
+	isTransformed = 1;
 	mat4 translate = glm::translate(mat4(),vec3(x, y, z));
 	transform = translate * transform;
 
@@ -74,6 +78,7 @@ void Model::translate(float x, float y, float z)
 
 void Model::rotate(float angle, vec3 inAxis)
 {
+	isTransformed = 1;
 	// Translate to center
 	mat4 translate1 = glm::translate(mat4(), vec3(0 - center.x, 0 - center.y, 0 - center.z));
 	mat4 rotate = glm::rotate(mat4(), angle, inAxis);
@@ -145,10 +150,7 @@ void Model::init(string filename)
 	isTransformed = 1;
 	calculateDimentions();
 
-	color.red = 1;
-	color.green = 1;
-	color.blue = 1;
-	color.alpha = 1;
+	color = vec4(1, 1, 1, 1);
 }
 
 // Gets vertex, texel, normal data
@@ -552,7 +554,7 @@ void Model::setTexture(Texture* inTexture)
 void Model::activateTextures(Shader shader)
 {
 	if (texture != nullptr)
-		texture->activate(shader.getUniformLocation("modelTex"),10);
+		texture->activate(shader.getUniformLocation("modelTex"), 10);
 }
 
 void Model::deactivateTextures()
@@ -568,7 +570,7 @@ void Model::updateTransform(mat4 inTransform)
 	//updateNormalMat();
 }
 
-void Model::setColor(Color inColor)
+void Model::setColor(vec4 inColor)
 {
 	color = inColor;
 }

@@ -20,7 +20,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 #include "Texture.h"
-#include "Color.h"
 #include "Object.h"
 
 using glm::mat4;
@@ -52,7 +51,7 @@ public:
 	void deactivateTextures();
 
 	void setTexture(Texture*);
-	void setColor(Color);
+	void setColor(vec4 color);
 
 	void scale(float);
 	void translate(float, float, float);
@@ -97,7 +96,7 @@ private:
 	int isTransformed;
 	GLuint isTextured;
 
-	Color color;
+	vec4 color;
 
 	float width;
 	float height;

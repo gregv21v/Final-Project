@@ -10,6 +10,7 @@ World::World() : moundY(1), activeTool(NONE)
 	mouse_prev_x = 0;
 	mouse_prev_y = 0;
 
+
 	pan_camera = false;
 
 	current_camera = 0;
@@ -69,15 +70,15 @@ void World::initValues()
 	ground.scale(200);
 
 	water.init("Models/water.obj");
-	//water.translate(50, -5, 50);
-	//water.scale(200);
+	water.translate(4, 4, 4);
+	water.scale(200);
 }
 
 void World::initLights()
 {
-	Color lightColor = { 1, 1, 1, 1 };
-	Color ambientColor = { .0, .0, .0, 1 };
 
+	vec3 ambientColor = vec3(0, 0, 0);
+	vec3 lightColor = vec3(1, 1, 1);
 	Light* directionalLight1 = new Light();
 	lights.push_back(directionalLight1);
 
@@ -85,8 +86,8 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setIsEnabled(true);
 	lights.at(DIRECTIONAL_1)->setIsLocal(false);
 	lights.at(DIRECTIONAL_1)->setIsSpot(false);
-	lights.at(DIRECTIONAL_1)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
-	lights.at(DIRECTIONAL_1)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
+	lights.at(DIRECTIONAL_1)->setAmbient(ambientColor);
+	lights.at(DIRECTIONAL_1)->setColor(lightColor);
 	lights.at(DIRECTIONAL_1)->setPosition(vec3(1000, 1000, -1000));
 	lights.at(DIRECTIONAL_1)->setHalfVector(vec3(0, 0, 0));
 	lights.at(DIRECTIONAL_1)->setConeDirection(vec3(0, 0, -1));
@@ -98,43 +99,25 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(false);
 
 	
-	lightColor.red = 1;
-	lightColor.green = 1;
-	lightColor.blue = 1;
-	lightColor.alpha = 1;
 
-	ambientColor.red = 0;
-	ambientColor.green = 0;
-	ambientColor.blue = 0;
-	ambientColor.alpha = 1;
 
 	Light* directionalLight2 = new Light();
 	lights.push_back(directionalLight2);
 
 	// init light values
 	lights.at(DIRECTIONAL_2)->setIsEnabled(true);
-	lights.at(DIRECTIONAL_2)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
-	lights.at(DIRECTIONAL_2)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
+	lights.at(DIRECTIONAL_2)->setAmbient(ambientColor);
+	lights.at(DIRECTIONAL_2)->setColor(lightColor);
 	lights.at(DIRECTIONAL_2)->setPosition(vec3(-1000, 1000, 1000));
 	lights.at(DIRECTIONAL_2)->setIsShadowMapEnabled(false);
-
-	lightColor.red = 1;
-	lightColor.green = 1;
-	lightColor.blue = 1;
-	lightColor.alpha = 1;
-
-	ambientColor.red = 0;
-	ambientColor.green = 0;
-	ambientColor.blue = 0;
-	ambientColor.alpha = 1;
 
 	Light* directionalLight3 = new Light();
 	lights.push_back(directionalLight3);
 
 	// init light values
 	lights.at(DIRECTIONAL_3)->setIsEnabled(true);
-	lights.at(DIRECTIONAL_3)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
-	lights.at(DIRECTIONAL_3)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
+	lights.at(DIRECTIONAL_3)->setAmbient(ambientColor);
+	lights.at(DIRECTIONAL_3)->setColor(lightColor);
 	lights.at(DIRECTIONAL_3)->setPosition(vec3(1000, 1000, 1000));
 	lights.at(DIRECTIONAL_3)->setIsShadowMapEnabled(false);
 
@@ -348,14 +331,17 @@ void World::renderOverheadCamera()
 
 void World::draw(Shader in_shader)
 {
-	//water.draw(in_shader);
+
 	
 	glUniform1i(in_shader.getUniformLocation("IsTerrain"), 1);
 	terrain.draw(in_shader);
+
+	glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
+	water.draw(in_shader);
 	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
 	//sky.draw(in_shader);
 
-	water.draw(in_shader);
+	
 
 }
 

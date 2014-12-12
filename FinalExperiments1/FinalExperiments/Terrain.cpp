@@ -23,7 +23,7 @@ void Terrain::draw(Shader in_shader)
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(vNormal);
 	glVertexAttribI1i(vIsTextured,isTextured);
-	glVertexAttrib4fv(vColor,&color.red);
+	glVertexAttrib4fv(vColor, glm::value_ptr(color));
 
 	for (int i = 0; i < TERR_WIDTH - 1; i++)
 	{
@@ -131,10 +131,7 @@ void Terrain::init()
 	roundness = 3;
 
 	// set base color
-	color.red = 1;
-	color.green = 1;
-	color.blue = 1;
-	color.alpha = 1;
+	color = vec4(1, 1, 1, 1);
 
 	isTextured = false;
 	isTransformed = false;

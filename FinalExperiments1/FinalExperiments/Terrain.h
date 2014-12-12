@@ -11,12 +11,12 @@
 #include "vgl.h"
 
 #include "Shader.h"
-#include "Color.h"
 
 #define TERR_WIDTH 300
 #define TERR_HEIGHT 300
 
 using glm::vec3;
+using glm::vec4;
 
 class Terrain
 {
@@ -77,7 +77,7 @@ private:
 	int roundness;
 	//---------------------------------------------------------
 
-	Color color;
+	vec4 color;
 
 	//---------------------------------------------------------
 	// Vertex Arrays and Buffers
