@@ -1,7 +1,12 @@
-﻿Build started 12/12/2014 2:37:47 PM.
+﻿Build started 12/12/2014 2:45:09 PM.
      1>Project "C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\FinalExperiments\FinalExperiments.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt World.cpp
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Light.cpp Model.cpp Ray.cpp Shader.cpp ShadowMap.cpp Terrain.cpp Water.cpp World.cpp main.cpp
+         main.cpp
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.h(190): warning C4091: 'static ' : ignored on left of 'World' when no variable is declared
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\main.cpp(54): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\main.cpp(61): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\main.cpp(68): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
          World.cpp
      1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.h(190): warning C4091: 'static ' : ignored on left of 'World' when no variable is declared
      1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(5): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
@@ -19,6 +24,31 @@
      1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(607): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
      1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\world.cpp(631): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
          GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+         Water.cpp
+         Terrain.cpp
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(77): warning C4244: 'initializing' : conversion from 'int' to 'GLfloat', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(199): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(241): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\terrain.cpp(387): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+         ShadowMap.cpp
+         Shader.cpp
+         Ray.cpp
+         Model.cpp
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(427): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(434): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(452): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(457): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(473): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(480): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(502): warning C4018: '<' : signed/unsigned mismatch
+         GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+         Light.cpp
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\light.cpp(18): warning C4305: '=' : truncation from 'double' to 'float'
+         Generating Code...
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(498): warning C4756: overflow in constant arithmetic
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(499): warning C4756: overflow in constant arithmetic
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(500): warning C4756: overflow in constant arithmetic
+     1>c:\users\gregory venezia\documents\github\final-project\finalexperiments1\finalexperiments\model.cpp(498): warning C4756: overflow in constant arithmetic
        Link:
          C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.exe" /INCREMENTAL /NOLOGO freeglut.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.lib" /MACHINE:X86 Debug\Camera.obj
          Debug\Light.obj
@@ -35,9 +65,10 @@
          Debug\TextureManager.obj
          Debug\Water.obj
          Debug\World.obj
+         LINK : C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.exe not found or not built by the last incremental link; performing full link
          FinalExperiments.vcxproj -> C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\Debug\FinalExperiments.exe
      1>Done Building Project "C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\FinalExperiments\FinalExperiments.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:07.01
+Time Elapsed 00:00:40.03
