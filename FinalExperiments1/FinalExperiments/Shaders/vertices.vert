@@ -76,6 +76,10 @@ void main()
 		}
 
 		vertPosition = VMatrix * in_position;
+
+		mat4 normal_matrix = transpose(inverse(VMatrix));
+
+		vertNormal = normalize(mat3(normal_matrix) * in_normal);
 		vertNormal = in_normal;
 		gl_Position = clip_pos;
 	}
@@ -87,7 +91,6 @@ void main()
 	vertTexCoord_xz = vec2((in_position.x / terrainProperties.width),(in_position.z / terrainProperties.height)) * terrainProperties.tileFactor;
 	vertTexCoord_xy = vec2((in_position.x / terrainProperties.width),(in_position.y / 100)) * terrainProperties.tileFactor;
 	vertTexCoord_zy = vec2((in_position.z / terrainProperties.height),(in_position.y /100)) * terrainProperties.tileFactor;
-	//vertTexCoord = in_position.xz;
 	
 	vertIsTextured = in_isTextured;
 }

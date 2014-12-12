@@ -94,6 +94,8 @@ public:
 
 	void updateRenderBufferSize();
 
+	void editTerrain(float,float);
+
 private:
 
 	//---------------------------------------

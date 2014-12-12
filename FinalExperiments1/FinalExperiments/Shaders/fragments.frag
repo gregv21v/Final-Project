@@ -40,7 +40,7 @@ in int vertIsTextured;
 
 uniform sampler2D modelTex;
 
-uniform int IsTerrain;
+uniform bool IsTerrain;
 
 uniform float Shininess;
 uniform float Strength;
@@ -129,7 +129,7 @@ void main()
 	float snow_factor = 1;
 	
 	// figure out height based texturing
-	if(world_pos.y >= 40)
+	if(world_pos.y >= 60)
 	{
 		snow_factor = 1;
 		rock_factor = 0;
@@ -137,15 +137,15 @@ void main()
 	}
 	else
 	{
-		if(world_pos.y >= 20)
+		if(world_pos.y >= 40)
 		{
-			snow_factor = 1 - (abs(40 - world_pos.y) / 20);
-			rock_factor = 1 - (abs(20 - world_pos.y) / 10);
+			snow_factor = 1 - (abs(60 - world_pos.y) / 20);
+			rock_factor = 1 - (abs(40 - world_pos.y) / 20);
 			grass_factor = 0; 
 		}
 		else
 		{
-			if(world_pos.y >= 15)
+			if(world_pos.y >= 25)
 			{
 				snow_factor = 0;
 				rock_factor = 1;
@@ -153,11 +153,11 @@ void main()
 			}
 			else
 			{
-				if(world_pos.y >= 5)
+				if(world_pos.y >= 10)
 				{
 					snow_factor = 0;
-					rock_factor = 1 - (abs(15 - world_pos.y) / 10);
-					grass_factor = 1 - (abs(5 - world_pos.y) / 10);
+					rock_factor = 1 - (abs(25 - world_pos.y) / 15);
+					grass_factor = 1 - (abs(10 - world_pos.y) / 15);
 				}
 				else
 				{
@@ -220,7 +220,7 @@ void main()
 			{
 				//vec3 rgb = min(min(Ambient * texture(tex[currTex],vertTexCoord).rgb,texture(tex[currTex], vertTexCoord).rgb * scatteredLight + reflectedLight), vec3(1.0));
 				//fragColor = vec4(rgb, texture(tex[currTex], vertTexCoord).a);
-				if(IsTerrain == 1)
+				if(IsTerrain)
 				{
 					vec3 rgb = min(max(Ambient * net_texture, net_texture * scatteredLight + reflectedLight), vec3(1.0));
 					fragColor = vec4(rgb, net_alpha);

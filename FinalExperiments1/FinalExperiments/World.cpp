@@ -59,8 +59,12 @@ void World::init(int in_width,int in_height)
 	setupTerrain();
 
 	sky.init("Models/sky.obj");
-	sky.scale(500);
+	sky.scale(300);
+	sky.translate(terrain.getWidth() / 2, 149, terrain.getHeight() / 2);
+	sky.rotate(180, vec3(0, 1, 0));
 	sky.setTexture(textures[3]);
+
+	activeTool = NONE;
 }
 
 void World::initValues()
@@ -74,7 +78,7 @@ void World::initValues()
 
 void World::initLights()
 {
-	Color lightColor = { 1, 1, 1, 1 };
+	Color lightColor = { .6, .6, .6, 1 };
 	Color ambientColor = { .0, .0, .0, 1 };
 
 	Light* directionalLight1 = new Light();
@@ -97,9 +101,9 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(false);
 
 	
-	lightColor.red = 1;
-	lightColor.green = 1;
-	lightColor.blue = 1;
+	lightColor.red = .6;
+	lightColor.green = .6;
+	lightColor.blue = .6;
 	lightColor.alpha = 1;
 
 	ambientColor.red = 0;
@@ -117,9 +121,9 @@ void World::initLights()
 	lights.at(DIRECTIONAL_2)->setPosition(vec3(-1000, 1000, 1000));
 	lights.at(DIRECTIONAL_2)->setIsShadowMapEnabled(false);
 
-	lightColor.red = 1;
-	lightColor.green = 1;
-	lightColor.blue = 1;
+	lightColor.red = .8;
+	lightColor.green = .8;
+	lightColor.blue = .6;
 	lightColor.alpha = 1;
 
 	ambientColor.red = 0;
@@ -137,7 +141,7 @@ void World::initLights()
 	lights.at(DIRECTIONAL_3)->setPosition(vec3(1000, 1000, 1000));
 	lights.at(DIRECTIONAL_3)->setIsShadowMapEnabled(false);
 
-	ambientLight = vec3(.5, .5, .5);
+	ambientLight = vec3(.6, .6, .6);
 }
 
 void World::initCameras()
@@ -156,7 +160,7 @@ void World::initMainCam()
 	Camera* temp1 = new Camera();
 	cams.push_back(temp1);
 
-	cams.at(MAIN_CAM)->init(terrain.getWidth() / 2, 20, terrain.getHeight() / 2);	
+	cams.at(MAIN_CAM)->init(terrain.getWidth() / 2, 40, terrain.getHeight() / 2);	
 }
 
 void World::initOverheadCam()
@@ -171,7 +175,7 @@ void World::initOverheadCam()
 		
 		glm::rotate(glm::mat4(), 90.0f, vec3(1, 0, 0)) *
 		glm::rotate(glm::mat4(), 180.0f, vec3(0, 1, 0)) *
-		glm::translate(glm::mat4(), vec3(-.5 * terrain.getWidth(), -10, -.5 * terrain.getHeight())));
+		glm::translate(glm::mat4(), vec3(-.5 * terrain.getWidth(), -150, -.5 * terrain.getHeight())));
 }
 
 void World::updateRenderBufferSize()
@@ -307,7 +311,7 @@ void World::setUniforms()
 	// setup global uniforms
 	glUniform3f(shader.getUniformLocation("EyeDirection"), 0, 0, 0);
 	glUniform3f(shader.getUniformLocation("Ambient"), ambientLight.x, ambientLight.y, ambientLight.z);
-	glUniform1f(shader.getUniformLocation("Strength"), .1);
+	glUniform1f(shader.getUniformLocation("Strength"), .5);
 	glUniform1f(shader.getUniformLocation("Shininess"), 100);
 	glUniform1i(shader.getUniformLocation("LightingOn"), globalProperties.lighting_on);
 	glUniform1i(shader.getUniformLocation("ShadowsOn"), globalProperties.shadow_maps_on);
@@ -359,10 +363,10 @@ void World::draw(Shader in_shader)
 {
 	//water.draw(in_shader);
 	
-	glUniform1i(in_shader.getUniformLocation("IsTerrain"), 1);
-	terrain.draw(in_shader);
-	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
+	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
 	//sky.draw(in_shader);
+	glUniform1i(in_shader.getUniformLocation("IsTerrain"), true);
+	terrain.draw(in_shader);
 }
 
 void World::keyPress(unsigned char key, int x, int y)
@@ -495,13 +499,16 @@ void World::arrowInput(int key, int x, int y)
 
 void World::idleFunc()
 {
-
+	//editTerrain(mouse_prev_x, mouse_prev_y);
 }
 
 void World::mouseFunc(int button, int state, float x, float y)
 {
 	Ray ray;
 	vec3 intersection;
+
+	mouse_prev_x = x;
+	mouse_prev_y = y;
 
 	switch (button)
 	{
@@ -514,7 +521,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 		{
 			ray.fromMouse(x, y, cams.at(MAIN_CAM));
 
-			if (ray.isCollidingWithPlane(-200, 200, -200, 200))
+			if (ray.isCollidingWithPlane(0, 300, 0, 300))
 			{
 				intersection = ray.getIntersection();
 				terrain.mound(intersection.x, intersection.z, moundY);
@@ -549,7 +556,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 		// Wheel Forward ( Zoom In )
 		//-------------------------------------------------------
 	case 3:
-		cams.at(current_camera)->setEyeMove(1);
+		cams.at(current_camera)->setEyeMove(2);
 		if (state == GLUT_UP) return;
 		cams.at(current_camera)->zoomIn();
 		//cout << "( " << cam.getEyePosition().x << " , " << cam.getEyePosition().y << " , " << cam.getEyePosition().z << " )\n";
@@ -558,7 +565,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 		// Wheel Back ( Zoom Out )
 		//-------------------------------------------------------
 	case 4:
-		cams.at(current_camera)->setEyeMove(1);
+		cams.at(current_camera)->setEyeMove(2);
 		if (state == GLUT_UP) return;
 		cams.at(current_camera)->zoomOut();
 		//cout << "( " << cam.getEyePosition().x << " , " << cam.getEyePosition().y << " , " << cam.getEyePosition().z << " )\n";
@@ -616,19 +623,7 @@ void World::motionFunc(float x, float y)
 		mouse_prev_y = y;
 	}
 
-	// Mouse Picking
-	if (activeTool == MOUND)
-	{
-		Ray ray;
-		vec3 intersection;
-		ray.fromMouse(x, y, cams.at(MAIN_CAM));
-		if (ray.isCollidingWithPlane(-200, 200, -200, 200))
-		{
-			intersection = ray.getIntersection();
-			terrain.mound(intersection.x, intersection.z, moundY / 2.0f);
-		}
-		activeTool = MOUND;
-	}
+	editTerrain(x, y);
 
 	//cout << "( " << cam.getEyePosition().x << " , " << cam.getEyePosition().y << " , " << cam.getEyePosition().z << " )\n";
 
@@ -719,4 +714,21 @@ void World::readPixelColor(int x, int y)
 		0, 1.0) * glm::inverse(cams.at(MAIN_CAM)->getFrustum());
 
 	cout << "( " << position.x << " , " << position.y << " , " << position.z << " )\n";
+}
+
+void World::editTerrain(float x,float y)
+{
+	// Mouse Picking
+	if (activeTool == MOUND)
+	{
+		Ray ray;
+		vec3 intersection;
+		ray.fromMouse(x, y, cams.at(MAIN_CAM));
+		if (ray.isCollidingWithPlane(0, 300, 0, 300))
+		{
+			intersection = ray.getIntersection();
+			terrain.mound(intersection.x, intersection.z, moundY / 2.0f);
+		}
+		activeTool = MOUND;
+	}
 }
