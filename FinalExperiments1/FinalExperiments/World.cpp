@@ -28,6 +28,8 @@ void World::init(int in_width,int in_height)
 	window_width = in_width;
 	window_height = in_height;
 
+	setupTerrain();
+
 	initValues();
 
 	initLights();
@@ -56,11 +58,11 @@ void World::init(int in_width,int in_height)
 
 	glClearColor(0, 0, 0, 0);
 
-	setupTerrain();
+	
 
 	sky.init("Models/sky.obj");
 	sky.scale(300);
-	sky.translate(terrain.getWidth() / 2, 149, terrain.getHeight() / 2);
+	sky.translate(terrain.getWidth() / 2, 0, terrain.getHeight() / 2);
 	sky.rotate(180, vec3(0, 1, 0));
 	sky.setTexture(textures[3]);
 
@@ -363,8 +365,8 @@ void World::draw(Shader in_shader)
 {
 	//water.draw(in_shader);
 	
-	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
-	//sky.draw(in_shader);
+	glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
+	sky.draw(in_shader);
 	glUniform1i(in_shader.getUniformLocation("IsTerrain"), true);
 	terrain.draw(in_shader);
 }

@@ -22,6 +22,7 @@ void Terrain::draw(Shader in_shader)
 
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(vNormal);
+	glVertexAttribI1i(vIsTransformed, false);
 	glVertexAttribI1i(vIsTextured,isTextured);
 	glVertexAttrib4fv(vColor,&color.red);
 
