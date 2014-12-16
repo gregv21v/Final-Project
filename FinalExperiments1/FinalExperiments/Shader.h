@@ -20,6 +20,7 @@ public:
 
 	void init();
 	void init(std::string vertPath, std::string fragPath);
+	void init(std::string vertPath, std::string fragPath,std::string geomPath);
 	GLint getUniformLocation(std::string);
 	void use();
 	void unuse();

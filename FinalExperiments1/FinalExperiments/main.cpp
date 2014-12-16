@@ -49,23 +49,17 @@ void idleFunc()
 
 void mouseFunc(int button,int state,int x, int y)
 {
-	world.mouseFunc(button,state,
-		map((float)x, 0, WIN_WIDTH, -1.0, 1.0),
-		map((float)y, WIN_HEIGHT, 0, -1.0, 1.0));
+	world.mouseFunc(button, state, x, y);
 }
 
 void motionFunc(int x, int y)
 {
-	world.motionFunc(
-		map((float)x, 0, WIN_WIDTH, -1.0, 1.0),
-		map((float)y, WIN_HEIGHT, 0, -1.0, 1.0));
+	world.motionFunc(x, y);
 }
 
 void passiveMotionFunc(int x, int y)
 {
-	world.passiveMotionFunc(
-		map((float)x, 0, WIN_WIDTH, -1.0, 1.0),
-		map((float)y, WIN_HEIGHT, 0, -1.0, 1.0));
+	world.passiveMotionFunc(x, y);
 }
 
 void reshapeFunc(int w, int h)
@@ -75,6 +69,8 @@ void reshapeFunc(int w, int h)
 
 int main(int argc, char* argv[])
 {
+	
+
 	// setup display/version information
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA);
@@ -83,7 +79,7 @@ int main(int argc, char* argv[])
 	glutInitContextVersion(3, 3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutCreateWindow("Experiment");
-
+	
 	glewExperimental = GL_TRUE;
 
 	//error check
@@ -92,7 +88,7 @@ int main(int argc, char* argv[])
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 	}
-
+	
 	// initialize the world
 	world.init(WIN_WIDTH,WIN_HEIGHT);
 

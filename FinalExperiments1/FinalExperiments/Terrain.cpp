@@ -22,7 +22,7 @@ void Terrain::draw(Shader in_shader)
 
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(vNormal);
-	glVertexAttribI1i(vIsTransformed, false);
+	glVertexAttribI1i(vIsTransformed, isTransformed);
 	glVertexAttribI1i(vIsTextured,isTextured);
 	glVertexAttrib4fv(vColor,&color.red);
 
@@ -55,6 +55,43 @@ void Terrain::init()
 		{
 			positions[i][j] = 0.0;
 			normals[i][j] = vec3(0, 1, 0);
+
+			/*
+			switch(i)
+			{
+			case 0:
+				switch (j)
+				{
+				case 0:
+					normals[i][j] = glm::normalize(vec3(-1, 3, -1));
+					break;
+				case TERR_HEIGHT:
+					normals[i][j] = glm::normalize(vec3(-1, 3, 1));
+					break;
+				default:
+					normals[i][j] = glm::normalize(vec3(-1, 2, 0));
+					break;
+				}
+				break;
+			case TERR_WIDTH:
+				switch (j)
+				{
+				case 0:
+					normals[i][j] = glm::normalize(vec3(1, 3, -1));
+					break;
+				case TERR_HEIGHT:
+					normals[i][j] = glm::normalize(vec3(1, 3, 1));
+					break;
+				default:
+					normals[i][j] = glm::normalize(vec3(1, 2, 0));
+					break;
+				}
+				break;
+			default:
+				normals[i][j] = vec3(0, 1, 0);
+				break;
+			}
+			*/
 		}
 	}
 
@@ -195,8 +232,8 @@ void Terrain::mound(int x, int z, float y)
 			int temp_x = x - size + i;
 			int temp_z = z - size + j;
 
-			if (temp_x >= 0 && temp_x < TERR_WIDTH &&
-				temp_z >= 0 && temp_z < TERR_HEIGHT)
+			if (temp_x > 1 && temp_x < TERR_WIDTH - 2 &&
+				temp_z > 1 && temp_z < TERR_HEIGHT - 2)
 			{
 				// y minus ( ( ( distance from center ) / (level / 2 ) ) times y )
 				float temp_pos =
@@ -373,10 +410,7 @@ void Terrain::updateNormBuffer(int x, int z)
 //--------------------------------------------------------
 void Terrain::setIsTextured(bool in_textured)
 {
-	if (in_textured)
-		isTextured = 1;
-	else
-		isTextured = 0;
+	isTextured = in_textured;
 }
 void Terrain::setIsTransformed(bool in_transformed)
 {

@@ -30,15 +30,13 @@ void World::init(int in_width,int in_height)
 
 	setupTerrain();
 
-	initValues();
-
 	initLights();
 
 	// initialize cameras
 	initCameras();
 
 	// initialize shaders
-	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag");
+	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag","Shaders/geometry.geom");
 	shadowMapShader.init("Shaders/shadowMap.vert", "Shaders/shadowMap.frag");
 
 	// Antialiasing
@@ -57,25 +55,21 @@ void World::init(int in_width,int in_height)
 	setupTextures();
 
 	glClearColor(0, 0, 0, 0);
-
 	
-
 	sky.init("Models/sky.obj");
-	sky.scale(300);
-	sky.translate(terrain.getWidth() / 2, 0, terrain.getHeight() / 2);
+	sky.scale(2250);
+	sky.translate(terrain.getWidth() / 2, 100, terrain.getHeight() / 2);
 	sky.rotate(180, vec3(0, 1, 0));
 	sky.setTexture(textures[3]);
 
+	floor.init(terrain.getWidth() - 1, terrain.getHeight() - 1);
+	floor.setTexture(textures[0]);
+
 	activeTool = NONE;
-}
 
-void World::initValues()
-{
-	cube.init("Models/mineCraftCube.obj");
-	cube.translate(0, 1, 0);
-
-	ground.init("Models/mineCraftGround.obj");
-	ground.scale(200);
+	height_texturing = false;
+	slope_texturing = false;
+	tri_planar_texturing = false;
 }
 
 void World::initLights()
@@ -162,7 +156,7 @@ void World::initMainCam()
 	Camera* temp1 = new Camera();
 	cams.push_back(temp1);
 
-	cams.at(MAIN_CAM)->init(terrain.getWidth() / 2, 40, terrain.getHeight() / 2);	
+	cams.at(MAIN_CAM)->init( 2 * terrain.getWidth() / 4, 10, 3 * terrain.getHeight() / 4);	
 }
 
 void World::initOverheadCam()
@@ -174,7 +168,6 @@ void World::initOverheadCam()
 	cams.at(OVERHEAD)->setIsOrtho(true);
 	cams.at(OVERHEAD)->setOrtho(-.5 * terrain.getWidth(), .5 * terrain.getWidth() - 1, -.5 * terrain.getHeight(), .5 * terrain.getHeight() - 1, 0, 10000);
 	cams.at(OVERHEAD)->setView(
-		
 		glm::rotate(glm::mat4(), 90.0f, vec3(1, 0, 0)) *
 		glm::rotate(glm::mat4(), 180.0f, vec3(0, 1, 0)) *
 		glm::translate(glm::mat4(), vec3(-.5 * terrain.getWidth(), -150, -.5 * terrain.getHeight())));
@@ -193,8 +186,6 @@ void World::updateRenderBufferSize()
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, window_width, window_height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
 		GL_RENDERBUFFER, RBs[MAIN_CAM_DEPTH_RB]);
-
-
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBs[OH_CAM_FB]);
 
@@ -253,7 +244,6 @@ void World::display()
 
 	// swap the buffers at the end of the display sequence
 	glutSwapBuffers();
-
 }
 
 void World::assembleFramebuffers()
@@ -286,10 +276,10 @@ void World::assembleFramebuffers()
 		0,
 		window_width,
 		window_height,
-		minimum_value * 9,
+		minimum_value * 10,
 		window_height - minimum_value,
 		minimum_value,
-		window_height - minimum_value * 9,
+		window_height - minimum_value * 10,
 		GL_COLOR_BUFFER_BIT,
 		GL_LINEAR);
 }
@@ -317,11 +307,16 @@ void World::setUniforms()
 	glUniform1f(shader.getUniformLocation("Shininess"), 100);
 	glUniform1i(shader.getUniformLocation("LightingOn"), globalProperties.lighting_on);
 	glUniform1i(shader.getUniformLocation("ShadowsOn"), globalProperties.shadow_maps_on);
+
+	glUniform1i(shader.getUniformLocation("HeightTexturing"), height_texturing);
+	glUniform1i(shader.getUniformLocation("SlopeTexturing"), slope_texturing);
+	glUniform1i(shader.getUniformLocation("TriPlanarTexturing"), tri_planar_texturing);
 	
 	textures[0]->activate(shader.getUniformLocation("tex[0]"), 0);
 	textures[1]->activate(shader.getUniformLocation("tex[1]"), 1);
 	textures[2]->activate(shader.getUniformLocation("tex[2]"), 2);
 	terrain.setupUniforms(shader);
+	floor.setupUniforms(shader);
 
 	// setup lighting uniforms
 	for (int i = 0; i < lights.size(); i++)
@@ -363,11 +358,13 @@ void World::renderOverheadCamera()
 
 void World::draw(Shader in_shader)
 {
-	//water.draw(in_shader);
-	
-	glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
+	glUniform1i(in_shader.getUniformLocation("Type"), SKY);
 	sky.draw(in_shader);
-	glUniform1i(in_shader.getUniformLocation("IsTerrain"), true);
+
+	glUniform1i(in_shader.getUniformLocation("Type"), FLOOR);
+	floor.draw(in_shader);
+
+	glUniform1i(in_shader.getUniformLocation("Type"), TERRAIN);
 	terrain.draw(in_shader);
 }
 
@@ -387,16 +384,16 @@ void World::keyPress(unsigned char key, int x, int y)
 		moundY = -1;
 		break;
 	case 'u':
-		target[1] ++;
+		//target[1] ++;
 		break;
 	case 'j':
-		target[1] --;
+		//target[1] --;
 		break;
 	case 'h':
-		target[0] --;
+		//target[0] --;
 		break;
 	case 'k':
-		target[0] ++;
+		//target[0] ++;
 		break;
 	case 'b':
 		terrain.increaseSize();
@@ -409,10 +406,6 @@ void World::keyPress(unsigned char key, int x, int y)
 		break;
 	case 'o':
 		terrain.decreaseRoundness();
-		break;
-	//--------------------------------------------------------------------------------------
-	case 'c':
-		//current_camera = (current_camera + 1) % cams.size();
 		break;
 	//--------------------------------------------------------------------------------------
 	// Individual Light Toggle
@@ -471,6 +464,18 @@ void World::keyPress(unsigned char key, int x, int y)
 		readPixelColor(x,y);
 		break;
 	//--------------------------------------------------------------------------------------
+	// Texture Toggles
+	//--------------------------------------------------------------------------------------
+	case '8':
+		height_texturing = !height_texturing;
+		break;
+	case '9':
+		slope_texturing = !slope_texturing;
+		break;
+	case '0':
+		tri_planar_texturing = !tri_planar_texturing;
+		break;
+	//--------------------------------------------------------------------------------------
 	default:
 		break;
 	}
@@ -504,8 +509,11 @@ void World::idleFunc()
 	//editTerrain(mouse_prev_x, mouse_prev_y);
 }
 
-void World::mouseFunc(int button, int state, float x, float y)
+void World::mouseFunc(int button, int state, int in_x, int in_y)
 {
+	float x = map((float)in_x, 0, window_width, -1.0, 1.0);
+	float y = map((float)in_y, window_height, 0, -1.0, 1.0);
+
 	Ray ray;
 	vec3 intersection;
 
@@ -521,6 +529,7 @@ void World::mouseFunc(int button, int state, float x, float y)
 		// Mouse Picking
 		if (state == GLUT_DOWN)
 		{
+			cout << "( " << x << " , " << y << " )" << endl;
 			ray.fromMouse(x, y, cams.at(MAIN_CAM));
 
 			if (ray.isCollidingWithPlane(0, 300, 0, 300))
@@ -579,8 +588,11 @@ void World::mouseFunc(int button, int state, float x, float y)
    glutPostRedisplay();
 }
 
-void World::motionFunc(float x, float y)
+void World::motionFunc(int in_x, int in_y)
 {
+	float x = map((float)in_x, 0, window_width, -1.0, 1.0);
+	float y = map((float)in_y, window_height, 0, -1.0, 1.0);
+
 	if (pan_camera)
 	{
 		vec2 move_direction = vec2(x - mouse_prev_x, y - mouse_prev_y);
@@ -632,8 +644,11 @@ void World::motionFunc(float x, float y)
 	glutPostRedisplay();
 }
 
-void World::passiveMotionFunc(float x, float y)
+void World::passiveMotionFunc(int in_x, int in_y)
 {
+	float x = map((float)in_x, 0, window_width, -1.0, 1.0);
+	float y = map((float)in_y, window_height, 0, -1.0, 1.0);
+
 	mouse_prev_x = x;
 	mouse_prev_y = y;
 }
@@ -660,12 +675,10 @@ void World::setupTerrain()
 	target[0] = terrain.getWidth()/2;
 	target[1] = terrain.getHeight()/2;
 
-	terrain.setTileFactor(5);
+	terrain.setTileFactor(2);
 	terrain.setSize(15);
 
 	terrain.setIsTextured(true);
-
-	//water.init(terrain.getWidth() / 2, terrain.getHeight() / 2);
 }
 
 void World::saveImage()

@@ -94,8 +94,8 @@ private:
 	};
 	//---------------------------------------------------------
 
-	int isTransformed;
-	GLuint isTextured;
+	bool isTransformed;
+	bool isTextured;
 
 	Color color;
 

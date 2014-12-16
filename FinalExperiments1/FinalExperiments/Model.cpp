@@ -142,7 +142,7 @@ void Model::init(string filename)
 	//updateNormalMat();
 	center = vec4(0.0, 0.0, 0.0, 1.0);
 
-	isTransformed = 1;
+	isTransformed = true;
 	calculateDimentions();
 
 	color.red = 1;
@@ -541,11 +541,11 @@ void Model::setTexture(Texture* inTexture)
 
 	if (texture != nullptr)
 	{
-		isTextured = 1;
+		isTextured = true;
 	}
 	else
 	{
-		isTextured = 0;
+		isTextured = false;
 	}
 }
 

@@ -1,16 +1,16 @@
 /*
-	Press 1,2,3:	Toggle Individual Lights
-	Press 'l':		Toggle Lighting
-	Press 'm':		Toggle Shadow Mapping
-	Press 'q':		Fullscreen
-	Press esc:		Exit Fullscreen
+Press 1,2,3:	Toggle Individual Lights
+Press 'l':		Toggle Lighting
+Press 'm':		Toggle Shadow Mapping
+Press 'q':		Fullscreen
+Press esc:		Exit Fullscreen
 
-	Mouse:
-		Left Button:		none
-		Wheel Button:		Press and hold and drag to rotate view
-		Right Button:		Press and hold and drag to move eye location
-		Wheel Forward:		zoom in on axis of view
-		Wheel Backwards:	zoom out on axis of view
+Mouse:
+Left Button:		none
+Wheel Button:		Press and hold and drag to rotate view
+Right Button:		Press and hold and drag to move eye location
+Wheel Forward:		zoom in on axis of view
+Wheel Backwards:	zoom out on axis of view
 */
 
 #pragma once
@@ -35,6 +35,7 @@
 #include "ShadowMap.h"
 #include "Terrain.h"
 #include "Ray.h"
+#include "Floor.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
@@ -57,7 +58,7 @@ public:
 
 	World();
 	~World();
-	void init(int,int);							// initializes World
+	void init(int, int);							// initializes World
 	void display();							// display function
 
 	//--------------------------------------------
@@ -65,9 +66,9 @@ public:
 	//--------------------------------------------
 	void keyPress(unsigned char, int, int);
 	void arrowInput(int, int, int);
-	void mouseFunc(int,int,float, float);
-	void motionFunc(float, float);
-	void passiveMotionFunc(float, float);
+	void mouseFunc(int, int, int, int);
+	void motionFunc(int, int);
+	void passiveMotionFunc(int, int);
 	void reshapeFunc(int, int);
 	//--------------------------------------------
 
@@ -94,7 +95,7 @@ public:
 
 	void updateRenderBufferSize();
 
-	void editTerrain(float,float);
+	void editTerrain(float, float);
 
 private:
 
@@ -110,7 +111,7 @@ private:
 	//---------------------------------------
 	vec3 ambientLight;
 	vector<Light*> lights;
-	
+
 	enum{ DIRECTIONAL_1, DIRECTIONAL_2, DIRECTIONAL_3, NUM_LIGHTS };
 	//---------------------------------------
 
@@ -129,13 +130,6 @@ private:
 	bool pan_camera;
 	bool move_camera;
 	int current_camera;
-	//---------------------------------------
-
-	//---------------------------------------
-	// Models
-	//---------------------------------------
-	Model cube;
-	Model ground;
 	//---------------------------------------
 
 	//---------------------------------------
@@ -184,7 +178,18 @@ private:
 	enum{ MAIN_CAM_COLOR_RB, MAIN_CAM_DEPTH_RB, OH_CAM_COLOR_RB, OH_CAM_DEPTH_RB, NUM_RBS };
 	GLuint RBs[NUM_RBS];
 	//---------------------------------------
-	
+
 	Model sky;
+	Floor floor;
+
+	enum { SKY, FLOOR, TERRAIN };
+
+	//---------------------------------------
+	// Texturing
+	//---------------------------------------
+	bool height_texturing;
+	bool slope_texturing;
+	bool tri_planar_texturing;
+	//---------------------------------------
 };
 

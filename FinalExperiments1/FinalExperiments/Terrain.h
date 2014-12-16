@@ -16,6 +16,7 @@
 #define TERR_WIDTH 300
 #define TERR_HEIGHT 300
 
+
 using glm::vec3;
 
 class Terrain
@@ -101,7 +102,7 @@ private:
 	//---------------------------------------------------------
 	// States
 	//---------------------------------------------------------
-	int isTextured;
+	bool isTextured;
 	bool isTransformed;
 	int tile_factor;		// how many tiled across each direction
 	//---------------------------------------------------------
