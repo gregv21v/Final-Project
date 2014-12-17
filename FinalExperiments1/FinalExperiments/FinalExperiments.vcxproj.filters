@@ -103,19 +103,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\fragments.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Shaders\shadowMap.frag">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Shaders\shadowMap.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Shaders\vertices.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Shaders\geometry.geom">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

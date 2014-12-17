@@ -1,4 +1,4 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'sky.blend'
 # Material Count: 1
 
 newmtl Material
@@ -9,4 +9,4 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\FinalExperiments\Textures\Sky.png
+map_Kd C:\Users\Gregory Venezia\Documents\GitHub\Final-Project\FinalExperiments1\FinalExperiments\Textures\Sky.png

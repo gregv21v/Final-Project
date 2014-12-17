@@ -29,15 +29,15 @@ int currTex = 1;
 const int maxTextures = 3;
 uniform sampler2D tex[maxTextures];
 
-in vec4 world_pos;
-in vec4 vertPosition;
-in vec4 vertColor;
-in vec3 vertNormal;
-in vec2 vertTexCoord;
-in vec2 vertTexCoord_xy;
-in vec2 vertTexCoord_zy;
-in vec2 vertTexCoord_xz;
-flat in int vertIsTextured;
+in vec4 geomWorld_pos;
+in vec4 geomPosition;
+in vec4 geomColor;
+in vec3 geomNormal;
+in vec2 geomTexCoord;
+in vec2 geomTexCoord_xy;
+in vec2 geomTexCoord_zy;
+in vec2 geomTexCoord_xz;
+flat in int geomIsTextured;
 
 uniform sampler2D modelTex;
 
@@ -71,7 +71,7 @@ void main()
 
 		if(Lights[light].isLocal)
 		{
-			lightDirection = lightDirection - vec3(vertPosition);
+			lightDirection = lightDirection - vec3(geomPosition);
 			float lightDistance = length(lightDirection);
 			lightDirection = lightDirection / lightDistance;
 
@@ -102,8 +102,8 @@ void main()
 			halfVector = normalize(lightDirection + EyeDirection);	
 		}	
 		
-		float diffuse = max(0.0, dot(vertNormal, lightDirection));
-		float specular = max(0.0, dot(vertNormal, halfVector));
+		float diffuse = max(0.0, dot(geomNormal, lightDirection));
+		float specular = max(0.0, dot(geomNormal, halfVector));
 
 		if(diffuse == 0.0)
 			specular = 0.0;
@@ -117,7 +117,7 @@ void main()
 
 		if(Lights[light].isShadowMapEnabled)
 		{
-			float shadow = textureProj(Lights[light].depth_texture,shadow_coord[light]);
+			float shadow = textureProj(Lights[light].depth_texture, shadow_coord[light]);
 			net_shadow += shadow * Lights[light].color;
 			numShadowsEnabled ++;
 		}
@@ -130,7 +130,7 @@ void main()
 	float snow_factor = 1;
 	
 	// figure out height based texturing
-	if(world_pos.y >= 40)
+	if(geomWorld_pos.y >= 40)
 	{
 		snow_factor = 1;
 		rock_factor = 0;
@@ -138,15 +138,15 @@ void main()
 	}
 	else
 	{
-		if(world_pos.y >= 20)
+		if(geomWorld_pos.y >= 20)
 		{
-			snow_factor = 1 - (abs(40 - world_pos.y) / 20);
-			rock_factor = 1 - (abs(20 - world_pos.y) / 10);
+			snow_factor = 1 - (abs(40 - geomWorld_pos.y) / 20);
+			rock_factor = 1 - (abs(20 - geomWorld_pos.y) / 10);
 			grass_factor = 0; 
 		}
 		else
 		{
-			if(world_pos.y >= 15)
+			if(geomWorld_pos.y >= 15)
 			{
 				snow_factor = 0;
 				rock_factor = 1;
@@ -154,11 +154,11 @@ void main()
 			}
 			else
 			{
-				if(world_pos.y >= 5)
+				if(geomWorld_pos.y >= 5)
 				{
 					snow_factor = 0;
-					rock_factor = 1 - (abs(15 - world_pos.y) / 10);
-					grass_factor = 1 - (abs(5 - world_pos.y) / 10);
+					rock_factor = 1 - (abs(15 - geomWorld_pos.y) / 10);
+					grass_factor = 1 - (abs(5 - geomWorld_pos.y) / 10);
 				}
 				else
 				{
@@ -171,32 +171,32 @@ void main()
 	}
 
 	vec3 net_texture = (
-		abs(dot(vertNormal,vec3(0,1,0))) * (
-											grass_factor * texture(tex[0],vertTexCoord_xz).rgb +
-											rock_factor * texture(tex[1],vertTexCoord_xz).rgb +
-											snow_factor * texture(tex[2],vertTexCoord_xz).rgb) + 
-		abs(dot(vertNormal,vec3(0,0,1))) * (
-											grass_factor * texture(tex[0],vertTexCoord_xy).rgb +
-											rock_factor * texture(tex[1],vertTexCoord_xy).rgb +
-											snow_factor * texture(tex[2],vertTexCoord_xy).rgb) + 
-		abs(dot(vertNormal,vec3(1,0,0))) * (
-											grass_factor * texture(tex[0],vertTexCoord_zy).rgb +
-											rock_factor * texture(tex[1],vertTexCoord_zy).rgb +
-											snow_factor * texture(tex[2],vertTexCoord_zy).rgb));
+		abs(dot(geomNormal,vec3(0,1,0))) * (
+											grass_factor * texture(tex[0],geomTexCoord_xz).rgb +
+											rock_factor * texture(tex[1],geomTexCoord_xz).rgb +
+											snow_factor * texture(tex[2],geomTexCoord_xz).rgb) + 
+		abs(dot(geomNormal,vec3(0,0,1))) * (
+											grass_factor * texture(tex[0],geomTexCoord_xy).rgb +
+											rock_factor * texture(tex[1],geomTexCoord_xy).rgb +
+											snow_factor * texture(tex[2],geomTexCoord_xy).rgb) + 
+		abs(dot(geomNormal,vec3(1,0,0))) * (
+											grass_factor * texture(tex[0],geomTexCoord_zy).rgb +
+											rock_factor * texture(tex[1],geomTexCoord_zy).rgb +
+											snow_factor * texture(tex[2],geomTexCoord_zy).rgb));
 
 	float net_alpha = (
-		abs(dot(vertNormal,vec3(0,1,0))) * (
-											grass_factor * texture(tex[0],vertTexCoord_xz).a +
-											rock_factor * texture(tex[1],vertTexCoord_xz).a +
-											snow_factor * texture(tex[2],vertTexCoord_xz).a) + 
-		abs(dot(vertNormal,vec3(0,0,1))) * (
-											grass_factor * texture(tex[0],vertTexCoord_xy).a +
-											rock_factor * texture(tex[1],vertTexCoord_xy).a +
-											snow_factor * texture(tex[2],vertTexCoord_xy).a) + 
-		abs(dot(vertNormal,vec3(1,0,0))) * (
-											grass_factor * texture(tex[0],vertTexCoord_zy).a +
-											rock_factor * texture(tex[1],vertTexCoord_zy).a +
-											snow_factor * texture(tex[2],vertTexCoord_zy).a));
+		abs(dot(geomNormal,vec3(0,1,0))) * (
+											grass_factor * texture(tex[0],geomTexCoord_xz).a +
+											rock_factor * texture(tex[1],geomTexCoord_xz).a +
+											snow_factor * texture(tex[2],geomTexCoord_xz).a) + 
+		abs(dot(geomNormal,vec3(0,0,1))) * (
+											grass_factor * texture(tex[0],geomTexCoord_xy).a +
+											rock_factor * texture(tex[1],geomTexCoord_xy).a +
+											snow_factor * texture(tex[2],geomTexCoord_xy).a) + 
+		abs(dot(geomNormal,vec3(1,0,0))) * (
+											grass_factor * texture(tex[0],geomTexCoord_zy).a +
+											rock_factor * texture(tex[1],geomTexCoord_zy).a +
+											snow_factor * texture(tex[2],geomTexCoord_zy).a));
 
 	net_alpha = 1;
 
@@ -204,23 +204,23 @@ void main()
 	{
 		if(ShadowsOn)
 		{
-			if(vertIsTextured == 1)
+			if(geomIsTextured == 1)
 			{
-				vec3 rgb = min(Ambient * texture(tex[currTex],vertTexCoord).rgb + net_shadow * (texture(tex[currTex], vertTexCoord).rgb * scatteredLight + reflectedLight), vec3(1.0));
-				fragColor = vec4(rgb, texture(tex[currTex], vertTexCoord).a);
+				vec3 rgb = min(Ambient * texture(tex[currTex],geomTexCoord).rgb + net_shadow * (texture(tex[currTex], geomTexCoord).rgb * scatteredLight + reflectedLight), vec3(1.0));
+				fragColor = vec4(rgb, texture(tex[currTex], geomTexCoord).a);
 			}
 			else 
 			{
-				vec3 rgb = min(Ambient + net_shadow * (vertColor.rgb * scatteredLight + reflectedLight), vec3(1.0));
-				fragColor = vec4(rgb, vertColor.a);
+				vec3 rgb = min(Ambient + net_shadow * (geomColor.rgb * scatteredLight + reflectedLight), vec3(1.0));
+				fragColor = vec4(rgb, geomColor.a);
 			}
 		}
 		else
 		{
-			if(vertIsTextured == 1)
+			if(geomIsTextured == 1)
 			{
-				//vec3 rgb = min(min(Ambient * texture(tex[currTex],vertTexCoord).rgb,texture(tex[currTex], vertTexCoord).rgb * scatteredLight + reflectedLight), vec3(1.0));
-				//fragColor = vec4(rgb, texture(tex[currTex], vertTexCoord).a);
+				//vec3 rgb = min(min(Ambient * texture(tex[currTex],geomTexCoord).rgb,texture(tex[currTex], geomTexCoord).rgb * scatteredLight + reflectedLight), vec3(1.0));
+				//fragColor = vec4(rgb, texture(tex[currTex], geomTexCoord).a);
 				if(IsTerrain == 1)
 				{
 					vec3 rgb = min(max(Ambient * net_texture, net_texture * scatteredLight + reflectedLight), vec3(1.0));
@@ -229,26 +229,26 @@ void main()
 				}
 				else
 				{
-					vec3 rgb = min(texture(modelTex,vertTexCoord).rgb, vec3(1.0));
-					fragColor = vec4(rgb, texture(modelTex, vertTexCoord).a);
+					vec3 rgb = min(texture(modelTex,geomTexCoord).rgb, vec3(1.0));
+					fragColor = vec4(rgb, texture(modelTex, geomTexCoord).a);
 				}
 			}
 			else 
 			{
-				vec3 rgb = min(Ambient + (vertColor.rgb * scatteredLight + reflectedLight), vec3(1.0));
-				fragColor = vec4(rgb, vertColor.a);
+				vec3 rgb = min(Ambient + (geomColor.rgb * scatteredLight + reflectedLight), vec3(1.0));
+				fragColor = vec4(rgb, geomColor.a);
 			}
 		}
 	} 
 	else 
 	{
-		if(vertIsTextured == 1)
+		if(geomIsTextured == 1)
 		{
-			fragColor = texture(tex[currTex], vertTexCoord);		
+			fragColor = texture(tex[currTex], geomTexCoord);		
 		}
 		else 
 		{
-			fragColor = vertColor;
+			fragColor = geomColor;
 		}
 	}
 }

@@ -40,20 +40,22 @@ out vec2 vertTexCoord_xy;
 out vec2 vertTexCoord_zy;
 out vec2 vertTexCoord_xz;
 out vec4 vertPosition;
-out vec4 world_pos;
+out vec4 vertWorld_pos;
+out mat4 vertModelMatrix;
 flat out int vertIsTextured;
 
 void main()
 {
+	
 	if(in_isTransformed == 1)
 	{
-		world_pos = ModelMatrix * in_position;
-		vec4 eye_pos = VMatrix * world_pos;
-		vec4 clip_pos = VPMatrix * world_pos;
+		vertWorld_pos = ModelMatrix * in_position;
+		vec4 eye_pos = VMatrix * vertWorld_pos;
+		vec4 clip_pos = VPMatrix * vertWorld_pos;
 
 		for(int light = 0;light < maxLights;light++)
 		{
-			shadow_coord[light] = shadowMatrices[light].ShadowMatrix * world_pos;
+			shadow_coord[light] = shadowMatrices[light].ShadowMatrix * vertWorld_pos;
 		}
 
 		vertPosition = VMatrix * ModelMatrix * in_position;
@@ -67,13 +69,13 @@ void main()
 	}
 	else
 	{
-		world_pos = in_position;
-		vec4 eye_pos = VMatrix * world_pos;
-		vec4 clip_pos = VPMatrix * world_pos;
+		vertWorld_pos = in_position;
+		vec4 eye_pos = VMatrix * vertWorld_pos;
+		vec4 clip_pos = VPMatrix * vertWorld_pos;
 
 		for(int light = 0;light < maxLights;light++)
 		{
-			shadow_coord[light] = shadowMatrices[light].ShadowMatrix * world_pos;
+			shadow_coord[light] = shadowMatrices[light].ShadowMatrix * vertWorld_pos;
 		}
 
 		vertPosition = VMatrix * in_position;
@@ -89,7 +91,8 @@ void main()
 	vertTexCoord_xy = vec2((in_position.x / terrainProperties.width),(in_position.y / 100)) * terrainProperties.tileFactor;
 	vertTexCoord_zy = vec2((in_position.z / terrainProperties.height),(in_position.y /100)) * terrainProperties.tileFactor;
 	//vertTexCoord = in_position.xz;
-	
+
+	vertModelMatrix = ModelMatrix;
 	vertIsTextured = in_isTextured;
 }
 

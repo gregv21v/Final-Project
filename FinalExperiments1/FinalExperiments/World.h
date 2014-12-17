@@ -104,6 +104,7 @@ private:
 	//---------------------------------------
 	Shader shader;
 	Shader shadowMapShader;
+	Shader waterShader;
 	//---------------------------------------
 
 	//---------------------------------------
@@ -153,6 +154,8 @@ private:
 	float mouse_prev_x;
 	float mouse_prev_y;
 	//---------------------------------------
+
+	float _time;
 
 	//---------------------------------------
 	// Window size
