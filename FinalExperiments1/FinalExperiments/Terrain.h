@@ -15,7 +15,8 @@
 
 #define TERR_WIDTH 300
 #define TERR_HEIGHT 300
-
+#define MAX_SIZE 50
+#define MAX_ROUND 20
 
 using glm::vec3;
 
@@ -30,12 +31,12 @@ public:
 	void init();
 
 	void setSize(int);
-	void increaseSize();
-	void decreaseSize();
+	bool increaseSize();
+	bool decreaseSize();
 
 	void setRoundness(int);
-	void increaseRoundness();
-	void decreaseRoundness();
+	bool increaseRoundness();
+	bool decreaseRoundness();
 
 	void mound(int, int, float);
 	void mountain(int,int,float);

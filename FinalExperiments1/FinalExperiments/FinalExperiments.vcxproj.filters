@@ -69,6 +69,9 @@
     <ClCompile Include="ProgressBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Water.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -122,6 +125,9 @@
     <ClInclude Include="ProgressBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Water.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\fragments.frag">
@@ -143,6 +149,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Shaders\guiFragments.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="waterGeometry.geom">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

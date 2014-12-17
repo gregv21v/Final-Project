@@ -1,38 +1,61 @@
-﻿Build started 12/16/2014 3:05:12 PM.
+﻿Build started 12/17/2014 5:06:34 PM.
      1>Project "D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\FinalExperiments\FinalExperiments.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt World.cpp
-         World.cpp
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.h(194): warning C4091: 'static ' : ignored on left of 'World' when no variable is declared
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(5): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(61): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(65): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(77): warning C4305: 'initializing' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(92): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(94): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(95): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(96): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(100): warning C4305: '=' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(101): warning C4305: '=' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(102): warning C4305: '=' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(120): warning C4305: '=' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(121): warning C4305: '=' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(122): warning C4305: '=' : truncation from 'double' to 'float'
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(159): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(169): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(290): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(322): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(514): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(515): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(538): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(538): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(593): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(594): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(649): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(650): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(664): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\world.cpp(745): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-         GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Gui.cpp
+         Gui.cpp
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(23): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(27): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(36): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(38): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(41): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(42): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(45): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(46): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(49): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(50): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(53): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(54): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(68): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(69): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(72): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(73): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(76): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(77): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(80): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(81): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(95): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(98): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(99): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(102): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(103): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(107): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(111): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(112): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(113): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(114): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(115): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(117): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(120): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(121): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(122): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(123): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(124): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(126): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(129): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(131): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(133): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(134): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(135): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(136): warning C4305: '=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(11): warning C4101: 'GUI_texture' : unreferenced local variable
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(242): warning C4305: '+=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(243): warning C4305: '+=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(254): warning C4305: '-=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(255): warning C4305: '-=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(266): warning C4305: '+=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(267): warning C4305: '+=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(280): warning C4305: '-=' : truncation from 'double' to 'GLfloat'
+     1>d:\users\andrew\documents\visual studio 2013\projects\graphics\finalexperiments1\finalexperiments\gui.cpp(281): warning C4305: '-=' : truncation from 'double' to 'GLfloat'
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.exe" /INCREMENTAL /NOLOGO freeglut.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.lib" /MACHINE:X86 Debug\Button.obj
          Debug\Camera.obj
@@ -51,10 +74,11 @@
          Debug\Terrain.obj
          Debug\Texture.obj
          Debug\TextureManager.obj
+         Debug\Water.obj
          Debug\World.obj
          FinalExperiments.vcxproj -> D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\Debug\FinalExperiments.exe
      1>Done Building Project "D:\Users\Andrew\Documents\Visual Studio 2013\Projects\Graphics\FinalExperiments1\FinalExperiments\FinalExperiments.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.32
+Time Elapsed 00:00:01.01

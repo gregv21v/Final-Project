@@ -5,7 +5,7 @@ World::World()
 	srand(time(NULL));
 
 	globalProperties.lighting_on = true;
-	globalProperties.shadow_maps_on = false;
+	globalProperties.shadow_maps_on = true;
 
 	mouse_prev_x = 0;
 	mouse_prev_y = 0;
@@ -17,9 +17,13 @@ World::World()
 
 World::~World()
 {
-	for (int i = 0; i < NUM_TEXTURES; i++)
+	for (int i = 0; i < lights.size(); i++)
 	{
-		delete textures[i];
+		delete lights[i];
+	}
+	for (int i = 0; i < cams.size(); i++)
+	{
+		delete cams[i];
 	}
 }
 
@@ -28,16 +32,22 @@ void World::init(int in_width,int in_height)
 	window_width = in_width;
 	window_height = in_height;
 
+	initValues();
+
 	setupTerrain();
 
 	initLights();
 
+	initFrameBuffers();
+
 	// initialize cameras
 	initCameras();
+	
 
 	// initialize shaders
 	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag","Shaders/geometry.geom");
 	shadowMapShader.init("Shaders/shadowMap.vert", "Shaders/shadowMap.frag");
+	guiShader.init("Shaders/guiVertices.vert", "Shaders/guiFragments.frag");
 
 	// Antialiasing
 	glEnable(GL_LINE_SMOOTH);
@@ -54,27 +64,54 @@ void World::init(int in_width,int in_height)
 	// setup textures
 	setupTextures();
 
+	initGui();
+	//water.setTexture(_texManager.get("Water"));
+
 	glClearColor(0, 0, 0, 0);
 	
 	sky.init("Models/sky.obj");
 	sky.scale(2250);
 	sky.translate(terrain.getWidth() / 2, 100, terrain.getHeight() / 2);
 	sky.rotate(180, vec3(0, 1, 0));
-	sky.setTexture(textures[3]);
+	sky.setTexture(_texManager.get("Sky"));
 
 	floor.init(terrain.getWidth() - 1, terrain.getHeight() - 1);
-	floor.setTexture(textures[0]);
+	floor.setTexture(_texManager.get("Grass"));
 
 	activeTool = NONE;
 
 	height_texturing = false;
 	slope_texturing = false;
 	tri_planar_texturing = false;
+
+	moundY = 1;
+
+	terrain.setSize(15);
+	for (int i = 0; i < 15; i++)
+	{
+		gui._GUI_radius_increase();
+	}
+	terrain.setRoundness(3);
+	for (int i = 0; i < 3; i++)
+	{
+		gui._GUI_roundness_increase();
+	}
+}
+
+void World::initValues()
+{
+	float waterDepth = -10;
+
+	Color waterColor = { 0.0, 0.0, 1.0, 0.5 };
+	water.init("Models/water.obj");
+	water.setColor(waterColor);
+	water.translate(0, waterDepth, 0);
+	water.scale(300);
 }
 
 void World::initLights()
 {
-	Color lightColor = { .6, .6, .6, 1 };
+	Color lightColor = { 1, 1, 1, 1 };
 	Color ambientColor = { .0, .0, .0, 1 };
 
 	Light* directionalLight1 = new Light();
@@ -86,7 +123,7 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setIsSpot(false);
 	lights.at(DIRECTIONAL_1)->setAmbient(vec3(ambientColor.red, ambientColor.green, ambientColor.blue));
 	lights.at(DIRECTIONAL_1)->setColor(vec3(lightColor.red, lightColor.green, lightColor.blue));
-	lights.at(DIRECTIONAL_1)->setPosition(vec3(1000, 1000, -1000));
+	lights.at(DIRECTIONAL_1)->setPosition(vec3(-100,100,-100));
 	lights.at(DIRECTIONAL_1)->setHalfVector(vec3(0, 0, 0));
 	lights.at(DIRECTIONAL_1)->setConeDirection(vec3(0, 0, -1));
 	lights.at(DIRECTIONAL_1)->setSpotCosCutoff(.9);
@@ -94,8 +131,9 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setConstantAttenuation(.05);
 	lights.at(DIRECTIONAL_1)->setLinearAttenuation(.005);
 	lights.at(DIRECTIONAL_1)->setQuadraticAttenuation(.005);
-	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(false);
+	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(true);
 
+	/*
 	
 	lightColor.red = .6;
 	lightColor.green = .6;
@@ -137,18 +175,29 @@ void World::initLights()
 	lights.at(DIRECTIONAL_3)->setPosition(vec3(1000, 1000, 1000));
 	lights.at(DIRECTIONAL_3)->setIsShadowMapEnabled(false);
 
-	ambientLight = vec3(.6, .6, .6);
+	*/
+
+	ambientLight = vec3(.4, .4, .4);
 }
 
-void World::initCameras()
+void World::initFrameBuffers()
 {
 	glGenFramebuffers(NUM_FBS, FBs);
 	glGenRenderbuffers(NUM_RBS, RBs);
 
 	updateRenderBufferSize();
+}
 
+void World::initCameras()
+{
 	initMainCam();
 	initOverheadCam();
+}
+
+void World::initGui()
+{
+	gui._GUI_initialize();
+	gui.setTexture(_texManager.get("GUI"));
 }
 
 void World::initMainCam()
@@ -156,7 +205,7 @@ void World::initMainCam()
 	Camera* temp1 = new Camera();
 	cams.push_back(temp1);
 
-	cams.at(MAIN_CAM)->init( 2 * terrain.getWidth() / 4, 10, 3 * terrain.getHeight() / 4);	
+	cams.at(MAIN_CAM)->init( 2 * terrain.getWidth() / 4, 20, 3 * terrain.getHeight() / 4);	
 }
 
 void World::initOverheadCam()
@@ -199,29 +248,32 @@ void World::updateRenderBufferSize()
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
 		GL_RENDERBUFFER, RBs[OH_CAM_DEPTH_RB]);
 
+	glBindFramebuffer(GL_FRAMEBUFFER, FBs[GUI_FB]);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[GUI_COLOR_RB]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, window_width, window_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		GL_RENDERBUFFER, RBs[GUI_COLOR_RB]);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, RBs[GUI_DEPTH_RB]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, window_width, window_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, RBs[GUI_DEPTH_RB]);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void World::setupTextures()
 {
+	// TODO: These should be moved to a text files
+	_texManager.add("Textures/Grass.png", "Grass");
+	_texManager.add("Textures/Rock.png", "Rock");
+	_texManager.add("Textures/Snow.png", "Snow");
+	_texManager.add("Textures/Sky.png", "Sky");
+	_texManager.add("Textures/GUI.png", "GUI");
 
-	// Texture Files
-	textureFilenames[0] = "Textures/Grass.png";
-	textureFilenames[1] = "Textures/Rock.png";
-	textureFilenames[2] = "Textures/Snow.png";
-	textureFilenames[3] = "Textures/Sky.png";
-
-	for (int i = 0; i < NUM_TEXTURES; i++)
-	{
-		textures[i] = new Texture();
-		textures[i]->loadFromFile(textureFilenames[i]);
-	}
-
-	textures[0]->load();
-	textures[1]->load();
-	textures[2]->load();
-	textures[3]->load();
+	_texManager.loadAll();
 }
 
 void World::display()
@@ -239,6 +291,12 @@ void World::display()
 	renderMainCamera();
 	shader.unuse();
 
+	
+	guiShader.use();
+	renderGui();
+	guiShader.unuse();
+	
+
 	// combine the framebuffers
 	assembleFramebuffers();
 
@@ -254,7 +312,7 @@ void World::assembleFramebuffers()
 	{
 		minimum_value = window_height / 40;
 	}
-
+	
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBs[MAIN_CAM_FB]);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glBlitFramebuffer(
@@ -282,6 +340,22 @@ void World::assembleFramebuffers()
 		window_height - minimum_value * 10,
 		GL_COLOR_BUFFER_BIT,
 		GL_LINEAR);
+	
+	
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBs[GUI_FB]);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(
+		0,
+		window_height - 80,
+		window_width,
+		window_height,
+		0,
+		0,
+		window_width,
+		80,
+		GL_COLOR_BUFFER_BIT,
+		GL_LINEAR);
+		
 }
 
 void World::renderShadowMaps()
@@ -312,9 +386,9 @@ void World::setUniforms()
 	glUniform1i(shader.getUniformLocation("SlopeTexturing"), slope_texturing);
 	glUniform1i(shader.getUniformLocation("TriPlanarTexturing"), tri_planar_texturing);
 	
-	textures[0]->activate(shader.getUniformLocation("tex[0]"), 0);
-	textures[1]->activate(shader.getUniformLocation("tex[1]"), 1);
-	textures[2]->activate(shader.getUniformLocation("tex[2]"), 2);
+	_texManager.get("Grass")->activate(shader.getUniformLocation("tex[0]"), 0);
+	_texManager.get("Rock")->activate(shader.getUniformLocation("tex[1]"), 1);
+	_texManager.get("Snow")->activate(shader.getUniformLocation("tex[2]"), 2);
 	terrain.setupUniforms(shader);
 	floor.setupUniforms(shader);
 
@@ -356,16 +430,40 @@ void World::renderOverheadCamera()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void World::renderGui()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, FBs[GUI_FB]);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	gui._GUI_draw(guiShader);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void World::draw(Shader in_shader)
 {
-	glUniform1i(in_shader.getUniformLocation("Type"), SKY);
-	sky.draw(in_shader);
+	_time += 0.5;
+	glUniform1f(shader.getUniformLocation("time"), _time);
+
+	// Terrain
+	glUniform1i(in_shader.getUniformLocation("Type"), TERRAIN);
+	glUniform1i(in_shader.getUniformLocation("IsWater"), false);
+	terrain.draw(in_shader);
+
+	// Non-terrain models
+	glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
 
 	glUniform1i(in_shader.getUniformLocation("Type"), FLOOR);
 	floor.draw(in_shader);
 
-	glUniform1i(in_shader.getUniformLocation("Type"), TERRAIN);
-	terrain.draw(in_shader);
+	glUniform1i(in_shader.getUniformLocation("Type"), SKY);
+	glUniform1i(in_shader.getUniformLocation("IsWater"), false);
+	sky.draw(in_shader);
+
+	glUniform1i(in_shader.getUniformLocation("Type"), WATER);
+	glUniform1i(in_shader.getUniformLocation("IsWater"), true);
+	water.draw(in_shader);
 }
 
 void World::keyPress(unsigned char key, int x, int y)
@@ -378,9 +476,13 @@ void World::keyPress(unsigned char key, int x, int y)
 	case 'z':
 		//terrain.mound(target[0], target[1], 1);
 		moundY = 1;
+		if (gui.raise == true)
+			gui._GUI_swap_direction();
 		break;
 	case 'x':
 		//terrain.mound(target[0], target[1], -1);
+		if (gui.raise == false)
+			gui._GUI_swap_direction();
 		moundY = -1;
 		break;
 	case 'u':
@@ -396,16 +498,20 @@ void World::keyPress(unsigned char key, int x, int y)
 		//target[0] ++;
 		break;
 	case 'b':
-		terrain.increaseSize();
+		if (terrain.increaseSize())
+			gui._GUI_radius_increase();
 		break;
 	case 'n':
-		terrain.decreaseSize();
+		if (terrain.decreaseSize())
+			gui._GUI_radius_decrease();
 		break;
-	case 'i':
-		terrain.increaseRoundness();
+	case 'c':
+		if (terrain.increaseRoundness())
+			gui._GUI_roundness_increase();
 		break;
-	case 'o':
-		terrain.decreaseRoundness();
+	case 'v':
+		if (terrain.decreaseRoundness())
+			gui._GUI_roundness_decrease();
 		break;
 	//--------------------------------------------------------------------------------------
 	// Individual Light Toggle
@@ -414,10 +520,10 @@ void World::keyPress(unsigned char key, int x, int y)
 		lights.at(DIRECTIONAL_1)->setIsEnabled(!lights.at(DIRECTIONAL_1)->getIsEnabled());
 		break;
 	case '2':
-		lights.at(DIRECTIONAL_2)->setIsEnabled(!lights.at(DIRECTIONAL_2)->getIsEnabled());
+		//lights.at(DIRECTIONAL_2)->setIsEnabled(!lights.at(DIRECTIONAL_2)->getIsEnabled());
 		break;
 	case '3':
-		lights.at(DIRECTIONAL_3)->setIsEnabled(!lights.at(DIRECTIONAL_3)->getIsEnabled());
+		//lights.at(DIRECTIONAL_3)->setIsEnabled(!lights.at(DIRECTIONAL_3)->getIsEnabled());
 		break;
 	//--------------------------------------------------------------------------------------
 	// Lighting and Shadow Maps Toggle
@@ -529,7 +635,7 @@ void World::mouseFunc(int button, int state, int in_x, int in_y)
 		// Mouse Picking
 		if (state == GLUT_DOWN)
 		{
-			cout << "( " << x << " , " << y << " )" << endl;
+			//cout << "( " << x << " , " << y << " )" << endl;
 			ray.fromMouse(x, y, cams.at(MAIN_CAM));
 
 			if (ray.isCollidingWithPlane(0, 300, 0, 300))
@@ -676,7 +782,7 @@ void World::setupTerrain()
 	target[1] = terrain.getHeight()/2;
 
 	terrain.setTileFactor(2);
-	terrain.setSize(15);
+	
 
 	terrain.setIsTextured(true);
 }

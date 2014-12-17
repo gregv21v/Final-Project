@@ -165,8 +165,8 @@ void Terrain::init()
 		}
 	}
 
-	size = 5;
-	roundness = 3;
+	size = 0;
+	roundness = 0;
 
 	// set base color
 	color.red = 1;
@@ -187,16 +187,23 @@ void Terrain::setSize(int in_size)
 {
 	size = in_size;
 }
-void Terrain::increaseSize()
+bool Terrain::increaseSize()
 {
-	size++;
+	if (size < MAX_SIZE)
+	{
+		size++;
+		return true;
+	}
+	return false;
 }
-void Terrain::decreaseSize()
+bool Terrain::decreaseSize()
 {
-	if (size >= 1)
+	if (size > 0)
 	{
 		size--;
+		return true;
 	}
+	return false;
 }
 //--------------------------------------------------------
 
@@ -207,16 +214,23 @@ void Terrain::setRoundness(int in_roundness)
 {
 	roundness = in_roundness;
 }
-void Terrain::increaseRoundness()
+bool Terrain::increaseRoundness()
 {
-	roundness++;
+	if (size < MAX_ROUND)
+	{
+		roundness++;
+		return true;
+	}
+	return false;
 }
-void Terrain::decreaseRoundness()
+bool Terrain::decreaseRoundness()
 {
-	if (roundness >= 1)
+	if (roundness > 0)
 	{
 		roundness--;
+		return true;
 	}
+	return false;
 }
 //--------------------------------------------------------
 

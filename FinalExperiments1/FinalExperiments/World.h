@@ -36,6 +36,9 @@ Wheel Backwards:	zoom out on axis of view
 #include "Terrain.h"
 #include "Ray.h"
 #include "Floor.h"
+#include "GUI.h"
+#include "Water.h"
+#include "TextureManager.h"
 
 #define map(value,inLow,inHigh,outLow,outHigh) ((value - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow)
 
@@ -72,8 +75,11 @@ public:
 	void reshapeFunc(int, int);
 	//--------------------------------------------
 
+	void initGui();
+	void initFrameBuffers();
 	void renderMainCamera();
 	void renderOverheadCamera();
+	void renderGui();
 	void draw(Shader);
 	void assembleFramebuffers();
 	void initValues();				// initializes values
@@ -104,6 +110,7 @@ private:
 	//---------------------------------------
 	Shader shader;
 	Shader shadowMapShader;
+	Shader guiShader;
 	//---------------------------------------
 
 	//---------------------------------------
@@ -118,8 +125,7 @@ private:
 	//---------------------------------------
 	// Textures
 	//---------------------------------------
-	std::string textureFilenames[NUM_TEXTURES];
-	Texture* textures[NUM_TEXTURES];
+	TextureManager _texManager;
 	//---------------------------------------
 
 	//---------------------------------------
@@ -157,11 +163,13 @@ private:
 	int win_full_prev_height;
 	//---------------------------------------
 
+	float _time;
+
 	//---------------------------------------
 	// Terrain
 	//---------------------------------------
 	Terrain terrain;
-	//Water water;
+	Water water;
 	int target[2];
 	int moundY;
 	//---------------------------------------
@@ -173,16 +181,21 @@ private:
 	//---------------------------------------
 	// Overhead Camera Framebuffer / Renderbuffer
 	//---------------------------------------
-	enum{ MAIN_CAM_FB, OH_CAM_FB, NUM_FBS };
+	enum{ MAIN_CAM_FB, OH_CAM_FB, GUI_FB, NUM_FBS };
 	GLuint FBs[NUM_FBS];
-	enum{ MAIN_CAM_COLOR_RB, MAIN_CAM_DEPTH_RB, OH_CAM_COLOR_RB, OH_CAM_DEPTH_RB, NUM_RBS };
+	enum{ 
+		MAIN_CAM_COLOR_RB, MAIN_CAM_DEPTH_RB, 
+		OH_CAM_COLOR_RB, OH_CAM_DEPTH_RB, 
+		GUI_COLOR_RB, GUI_DEPTH_RB, NUM_RBS };
 	GLuint RBs[NUM_RBS];
 	//---------------------------------------
+
+	GUI gui;
 
 	Model sky;
 	Floor floor;
 
-	enum { SKY, FLOOR, TERRAIN };
+	enum { SKY, FLOOR, TERRAIN, WATER };
 
 	//---------------------------------------
 	// Texturing

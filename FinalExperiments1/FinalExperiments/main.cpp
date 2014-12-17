@@ -1,7 +1,8 @@
 //------------------------------------------------------------------------------------
-// Experimentation
+// Terrain Shaper
 // 11/24/14
-// Description: Blocks
+// Description: Modifiable Terrain Program
+// Authors: Andrew Joyal, Gregory Venezia, Jake Wilkins
 //------------------------------------------------------------------------------------
 
 

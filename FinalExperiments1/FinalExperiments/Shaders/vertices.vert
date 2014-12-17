@@ -1,7 +1,7 @@
 #version 330 core
 #pragma optionNV unroll all
 
-const int maxLights = 3;		// *** Change this when adding lights ***
+const int maxLights = 1;		// *** Change this when adding lights ***
 const int maxTextures = 3;		// *** Change this when adding textures ***
 
 struct ShadowMatrices {

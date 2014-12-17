@@ -71,8 +71,8 @@ void ShadowMap::use(Shader shader,int i)
 	shader.use();
 	glUniformMatrix4fv(shader.getUniformLocation("shadowMatrices[" + std::to_string(i) + "].ShadowMatrix"), 1, GL_FALSE, glm::value_ptr(scaleBias * frustum * view));
 
-	glUniform1i(shader.getUniformLocation("Lights[" + std::to_string(i) + "].depth_texture"), 5 + i);
-	glActiveTexture(GL_TEXTURE5 + i);
+	glUniform1i(shader.getUniformLocation("Lights[" + std::to_string(i) + "].depth_texture"), 6 + i);
+	glActiveTexture(GL_TEXTURE6 + i);
 	glBindTexture(GL_TEXTURE_2D, depth_texture);
 }
 
