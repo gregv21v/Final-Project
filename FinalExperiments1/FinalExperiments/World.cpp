@@ -18,14 +18,7 @@ World::World() : moundY(1), activeTool(NONE)
 
 World::~World()
 {
-	for (int i = 0; i < lights.size(); i++)
-	{
-		delete lights[i];
-	}
-	for (int i = 0; i < cams.size(); i++)
-	{
-		delete cams[i];
-	}
+	
 }
 
 void World::init(int in_width,int in_height)
@@ -41,9 +34,8 @@ void World::init(int in_width,int in_height)
 	initCameras();
 
 	// initialize shaders
-	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag", "Shaders/geometry.geom");
+	shader.init("Shaders/vertices.vert", "Shaders/fragments.frag");
 	shadowMapShader.init("Shaders/shadowMap.vert", "Shaders/shadowMap.frag");
-	//waterShader.init("Shaders/water.vert", "Shaders/water.geom", "Shaders/water.frag");
 
 	// Antialiasing
 	glEnable(GL_LINE_SMOOTH);
@@ -59,8 +51,6 @@ void World::init(int in_width,int in_height)
 
 	// setup textures
 	setupTextures();
-
-	water.setTexture(_texManager.get("Water"));
 
 	glClearColor(0, 0, 0, 0);
 
@@ -83,13 +73,9 @@ void World::initValues()
 	ground.init("Models/mineCraftGround.obj");
 	ground.scale(200);
 
-
-	float waterDepth = -10;
-
-	water.init("Models/water.obj");
-	water.setColor(vec4(0.0, 0.0, 1.0, 0.5));
-	water.translate(0, waterDepth, 0);
-	water.scale(400);
+	//water.init("Models/water.obj");
+	//water.translate(4, -100, 4);
+	//water.scale(200);
 }
 
 void World::initLights()
@@ -115,6 +101,9 @@ void World::initLights()
 	lights.at(DIRECTIONAL_1)->setLinearAttenuation(.005);
 	lights.at(DIRECTIONAL_1)->setQuadraticAttenuation(.005);
 	lights.at(DIRECTIONAL_1)->setIsShadowMapEnabled(false);
+
+	
+
 
 	Light* directionalLight2 = new Light();
 	lights.push_back(directionalLight2);
@@ -212,7 +201,6 @@ void World::setupTextures()
 	_texManager.add("Textures/Grass.png", "Rock");
 	_texManager.add("Textures/Snow.png", "Snow");
 	_texManager.add("Textures/Sky.png", "Sky");
-	_texManager.add("Textures/Water.png", "Water");
 
 	_texManager.loadAll();
 }
@@ -231,9 +219,6 @@ void World::display()
 	renderOverheadCamera();
 	renderMainCamera();
 	shader.unuse();
-
-	
-
 
 	// combine the framebuffers
 	assembleFramebuffers();
@@ -351,24 +336,17 @@ void World::renderOverheadCamera()
 void World::draw(Shader in_shader)
 {
 
-	_time += 0.5;
-	glUniform1f(shader.getUniformLocation("time"), _time);
+	
 
-	// Terrain
+	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
+	//sky.draw(in_shader);
 	glUniform1i(in_shader.getUniformLocation("IsTerrain"), true);
-	glUniform1i(in_shader.getUniformLocation("IsWater"), false);
 	terrain.draw(in_shader);
 
-	// Non-terrain models
-	glUniform1i(in_shader.getUniformLocation("IsTerrain"), false);
-
-		glUniform1i(in_shader.getUniformLocation("IsWater"), true);
-		water.draw(in_shader);
-
-		glUniform1i(in_shader.getUniformLocation("IsWater"), false);
-		sky.draw(in_shader);
-
-
+	glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
+	water.draw(in_shader);
+	//glUniform1i(in_shader.getUniformLocation("IsTerrain"), 0);
+	//sky.draw(in_shader);
 
 	
 
@@ -504,9 +482,6 @@ void World::arrowInput(int key, int x, int y)
 
 void World::idleFunc()
 {
-	
-
-	glutPostRedisplay();
 
 }
 

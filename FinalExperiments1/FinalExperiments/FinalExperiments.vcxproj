@@ -100,8 +100,11 @@
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\fragments.frag" />
+    <None Include="Shaders\geometry.geom" />
     <None Include="Shaders\shadowMap.frag" />
     <None Include="Shaders\shadowMap.vert" />
+    <None Include="Shaders\vertices.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

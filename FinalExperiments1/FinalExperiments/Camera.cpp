@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 Camera::Camera()
-{
+{	
 }
 
 Camera::~Camera()
@@ -10,32 +10,28 @@ Camera::~Camera()
 
 void Camera::camOut()
 {
-	float temp_x = eye_move * cos(totalRotation.y * PI / 180.0);
-	float temp_z = eye_move * sin(totalRotation.y * PI / 180.0);
+	float temp_x = eyePosition.x + eye_move * cos(totalRotation.y * PI / 180.0);
+	float temp_z = eyePosition.z - eye_move * sin(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if ((temp_x) < MAX_MOVE && (temp_z) < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(0, 0, -eye_move));
 		view = translate * view;
-		eyePosition = vec3(eyePosition.x + temp_x, eyePosition.y, eyePosition.z + temp_z);
+		eyePosition = vec3(temp_x, eyePosition.y, temp_z);
 	}
-
-	//cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
 }
 
 void Camera::camIn()
 {
-	float temp_x = -eye_move * cos(totalRotation.y * PI / 180.0);
-	float temp_z = -eye_move * sin(totalRotation.y * PI / 180.0);
+	float temp_x = eyePosition.x - eye_move * cos(totalRotation.y * PI / 180.0);
+	float temp_z = eyePosition.z + eye_move * sin(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if ((temp_x) < MAX_MOVE && (temp_z) < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(0, 0, eye_move));
 		view = translate * view;
-		eyePosition = vec3(eyePosition.x + temp_x, eyePosition.y, eyePosition.z + temp_z);
+		eyePosition = vec3(temp_x, eyePosition.y, temp_z);
 	}
-
-	//cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
 }
 
 void Camera::camUp()
@@ -54,32 +50,28 @@ void Camera::camDown()
 
 void Camera::camLeft()
 {
-	float temp_x = -eye_move * sin(totalRotation.y * PI / 180.0);
-	float temp_z = eye_move * cos(totalRotation.y * PI / 180.0);
+	float temp_x = eyePosition.x - eye_move * sin(totalRotation.y * PI / 180.0);
+	float temp_z = eyePosition.z - eye_move * cos(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if (temp_x < MAX_MOVE && temp_z < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(eye_move, 0, 0));
 		view = translate * view;
-		eyePosition = vec3(eyePosition.x + temp_x, eyePosition.y, eyePosition.z + temp_z);
+		eyePosition = vec3(temp_x, eyePosition.y, temp_z);
 	}
-
-	//cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
 }
 
 void Camera::camRight()
 {
-	float temp_x = eye_move * sin(totalRotation.y * PI / 180.0);
-	float temp_z = -eye_move * cos(totalRotation.y * PI / 180.0);
+	float temp_x = eyePosition.x + eye_move * sin(totalRotation.y * PI / 180.0);
+	float temp_z = eyePosition.z + eye_move * cos(totalRotation.y * PI / 180.0);
 
-	if (abs(temp_x) < MAX_MOVE && abs(temp_z) < MAX_MOVE)
+	if (temp_x < MAX_MOVE && temp_z < MAX_MOVE)
 	{
 		mat4 translate = glm::translate(glm::mat4(), vec3(-eye_move, 0, 0));
 		view = translate * view;
-		eyePosition = vec3(eyePosition.x + temp_x, eyePosition.y, eyePosition.z + temp_z);
+		eyePosition = vec3(temp_x, eyePosition.y, temp_z);
 	}
-
-	//cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
 }
 
 void Camera::zoomIn()
@@ -94,8 +86,8 @@ void Camera::zoomIn()
 	view = translate * view;
 	eyePosition = vec3(eyePosition.x - temp_x, eyePosition.y + temp_y, eyePosition.z - temp_z);
 
-	//cout << "( " << temp_x << " , " << temp_y << " , " << temp_z << " )\n";
-	//cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
+	cout << "( " << temp_x << " , " << temp_y << " , " << temp_z << " )\n";
+	cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
 }
 
 void Camera::zoomOut()
@@ -106,12 +98,12 @@ void Camera::zoomOut()
 
 	float move_z = eye_move * sin(totalRotation.z * PI / 180.0);
 
-	mat4 translate = glm::translate(glm::mat4(), vec3(0, temp_y, -move_z));
+	mat4 translate = glm::translate(glm::mat4(), vec3(0,temp_y,-move_z));
 	view = translate * view;
 	eyePosition = vec3(eyePosition.x + temp_x, eyePosition.y - temp_y, eyePosition.z + temp_z);
 
-	//cout << "( " << temp_x << " , " << temp_y << " , " << temp_z << " )\n";
-	//cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
+	cout << "( " << temp_x << " , " << temp_y << " , " << temp_z << " )\n";
+	cout << "( " << eyePosition.x << " , " << eyePosition.y << " , " << eyePosition.z << " )\n\n";
 }
 
 // rotate the view
@@ -141,7 +133,7 @@ void Camera::camLookDown()
 	mat4 rotate = glm::rotate(glm::mat4(), look_move, vec3((float)1, (float)0, (float)0));
 	rotateMatrix = rotate * rotateMatrix;
 	totalRotation.z += look_move;
-	updateEyeDirection(glm::inverse(rotate));
+	updateEyeDirection((rotate));
 }
 
 void Camera::setEyeMove(float move)
@@ -174,7 +166,7 @@ void Camera::init(float x, float y, float z)
 	eye_move = EYE_MOVE_DEFAULT;
 	look_move = LOOK_MOVE_DEFAULT;
 
-	totalRotation = vec3(0.0, 90.0, 90.0);
+	totalRotation = vec3(0.0,90.0,90.0);
 	eyePosition = vec3(x, y, z);
 	eyeDirection = vec3(0, 0, -1);
 
@@ -221,7 +213,7 @@ void Camera::setUniforms(Shader shader)
 	{
 		glUniformMatrix4fv(shader.getUniformLocation("VPMatrix"), 1, GL_FALSE, glm::value_ptr(frustum * rotateMatrix * view));
 	}
-
+	
 	glUniformMatrix4fv(shader.getUniformLocation("VMatrix"), 1, GL_FALSE, glm::value_ptr(rotateMatrix * view));
 }
 
@@ -294,6 +286,7 @@ vec4 Camera::convertToEyeSpace(vec4 point)
 		return glm::inverse(ortho) * point;
 	else
 		return glm::inverse(frustum) * point;
+
 }
 
 // from eye to world space
@@ -308,5 +301,4 @@ vec4 Camera::unproject(vec4 point)
 		return glm::inverse(ortho * rotateMatrix * view) * point;
 	else
 		return glm::inverse(frustum * rotateMatrix * view) * point;
-
 }
